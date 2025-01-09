@@ -1,0 +1,25 @@
+/* Positionnement principal */
+body {
+    margin: 0;
+}
+
+main {
+    margin-left: 240px; /* Largeur de la sidebar */
+    margin-top: 64px; /* Hauteur du header */
+    padding: 16px;
+}
+
+@media (max-width: 768px) {
+    aside {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    aside.active {
+        transform: translateX(0);
+    }
+
+    main {
+        margin-left: 0;
+    }
+}
