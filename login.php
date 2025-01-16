@@ -9,25 +9,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Vérification des champs
     if (!empty($email) && !empty($password)) {
-        try {
-            $stmt = $pdo->prepare("SELECT * FROM utilisateurs WHERE email = :email AND etat = TRUE");
-            $stmt->execute(['email' => $email]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = "invalid_email_format";
+        } else {
+            try {
+                $stmt = $pdo->prepare("SELECT * FROM utilisateurs WHERE email = :email AND etat = TRUE");
+                $stmt->execute(['email' => $email]);
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($user && password_verify($password, $user['password'])) {
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['user_name'] = $user['nom'];
-                $_SESSION['role'] = $user['role'];
+                if ($user && password_verify($password, $user['password'])) {
+                    session_start();
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['user_name'] = $user['nom'];
+                    $_SESSION['role'] = $user['role'];
 
-                // Rediriger vers le tableau de bord ou la page d'accueil
-                $redirect = ($user['role'] === 'admin') ? 'admin/dashboard.php' : 'index.php';
-                header("Location: $redirect");
-                exit();
-            } else {
-                $error = "email_or_password_incorrect";
+                    $redirect = ($user['role'] === 'admin') ? 'admin/dashboard.php' : 'index.php';
+                    header("Location: $redirect");
+                    exit();
+                } else {
+                    $error = "login_error";
+                }
+            } catch (PDOException $e) {
+                $error = "connection_error";
             }
-        } catch (PDOException $e) {
-            $error = "connection_error";
         }
     } else {
         $error = "fill_all_fields";
@@ -38,13 +42,8 @@ include 'includes/head.php';
 include 'includes/header.php';
 include 'includes/sidebar.php';
 
-// Charger les traductions
 $translations = include 'includes/translations.php';
-
-// Définir la langue actuelle
 $lang = $_SESSION['lang'] ?? 'fr';
-
-// Charger les traductions pour la langue actuelle
 $t = $translations[$lang];
 ?>
 
@@ -52,7 +51,7 @@ $t = $translations[$lang];
     <div class="bg-white p-8 rounded-lg shadow-lg w-96">
         <h1 class="text-2xl font-bold mb-4"><?= $t['login_title'] ?></h1>
         <?php if ($error): ?>
-            <p class="text-red-500 mb-4"><?= htmlspecialchars($t[$error]) ?></p>
+            <p class="text-red-500 mb-4"><?= htmlspecialchars($t[$error] ?? '') ?></p>
         <?php endif; ?>
         <form method="post" action="">
             <label for="email" class="block text-gray-700"><?= $t['email'] ?>:</label>

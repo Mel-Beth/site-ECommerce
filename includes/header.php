@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 // Charger les traductions
 $translations = include 'translations.php';
@@ -49,30 +48,33 @@ if (!is_array($cartItems)) {
 
     <!-- Section droite -->
     <nav class="flex items-center space-x-6">
-        <!-- Langue -->
-        <div class="relative group">
-            <div class="flex items-center cursor-pointer">
-                <span class="fi <?= $_SESSION['lang'] === 'fr' ? 'fi-fr' : 'fi-gb' ?>"></span>
-                <span class="ml-2"><?= $_SESSION['lang'] === 'fr' ? 'FR' : 'EN' ?></span>
-                <i class="fas fa-caret-down ml-1"></i>
+        <?php if (isset($_SESSION['user_id'])): ?>
+            <!-- Si l'utilisateur est connecté -->
+            <div class="flex items-center space-x-2">
+                <span>Bonjour, <?= htmlspecialchars($_SESSION['username']) ?> !</span>
+                <a href="user.php" class="text-yellow-500 hover:underline"><?= $t['profile'] ?></a>
             </div>
-            <div class="dropdown-menu hidden group-hover:block">
-                <a href="?lang=fr" class="block px-4 py-2 hover:bg-gray-100"><?= $t['french'] ?></a>
-                <a href="?lang=en" class="block px-4 py-2 hover:bg-gray-100"><?= $t['english'] ?></a>
-            </div>
-        </div>
 
-        <!-- Compte et listes -->
-        <div class="relative group">
-            <a href="#" class="flex items-center space-x-1 hover:underline">
-                <span><?= $t['identify'] ?></span>
-                <i class="fas fa-caret-down"></i>
-            </a>
-            <div class="dropdown-menu hidden group-hover:block">
-                <a href="login.php" class="block px-4 py-2 hover:bg-gray-100"><?= $t['connect'] ?></a>
-                <a href="register.php" class="block px-4 py-2 hover:bg-gray-100"><?= $t['register'] ?></a>
+            <?php if ($_SESSION['role'] == 'admin'): ?>
+                <!-- Si l'utilisateur est administrateur -->
+                <a href="admin/dashboard.php" class="text-yellow-500 hover:underline"><?= $t['admin_dashboard'] ?></a>
+            <?php endif; ?>
+
+            <!-- Déconnexion -->
+            <a href="logout.php" class="text-yellow-500 hover:underline"><?= $t['logout'] ?></a>
+        <?php else: ?>
+            <!-- Si l'utilisateur n'est pas connecté -->
+            <div class="relative group">
+                <a href="#" class="flex items-center space-x-1 hover:underline">
+                    <span><?= $t['identify'] ?></span>
+                    <i class="fas fa-caret-down"></i>
+                </a>
+                <div class="dropdown-menu hidden group-hover:block">
+                    <a href="login.php" class="block px-4 py-2 hover:bg-gray-100"><?= $t['connect'] ?></a>
+                    <a href="register.php" class="block px-4 py-2 hover:bg-gray-100"><?= $t['register'] ?></a>
+                </div>
             </div>
-        </div>
+        <?php endif; ?>
 
         <!-- Panier -->
         <div class="relative group">
@@ -83,26 +85,6 @@ if (!is_array($cartItems)) {
                     <?= count($cartItems) ?>
                 </span>
             </a>
-            <div class="dropdown-menu hidden group-hover:block">
-                <?php if (count($cartItems) > 0): ?>
-                    <ul class="space-y-2">
-                        <?php foreach ($cartItems as $item): ?>
-                            <li class="flex items-center space-x-2">
-                                <img src="assets/images/<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="w-10 h-10 object-cover rounded">
-                                <div>
-                                    <p class="font-bold text-sm"><?= htmlspecialchars($item['name']) ?></p>
-                                    <p class="text-sm text-gray-500"><?= htmlspecialchars($item['quantity']) ?> x <?= number_format($item['price'], 2) ?> €</p>
-                                </div>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                    <div class="mt-4">
-                        <a href="cart.php" class="block px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-center"><?= $t['view_cart'] ?></a>
-                    </div>
-                <?php else: ?>
-                    <p class="text-gray-500"><?= $t['empty_cart'] ?></p>
-                <?php endif; ?>
-            </div>
         </div>
     </nav>
 </header>

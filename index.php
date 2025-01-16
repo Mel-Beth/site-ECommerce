@@ -1,7 +1,22 @@
 <?php
+session_start(); // S'assurer que la session est démarrée au début
+
 include 'includes/head.php';
-include 'includes/header.php';
+include 'includes/header.php'; // Inclure le header avant les redirections
 include 'php/db.php'; // Connexion à la base de données
+
+// Vérifier si l'utilisateur est connecté
+if (isset($_SESSION['user_id'])) {
+    if ($_SESSION['role'] == 'admin') {
+        // Redirige l'administrateur
+        header('Location: admin/dashboard.php');
+        exit(); // Arrêter l'exécution après la redirection
+    } else {
+        // Redirige l'utilisateur normal
+        header('Location: user.php');
+        exit(); // Arrêter l'exécution après la redirection
+    }
+}
 
 // Charger les traductions
 $translations = include 'includes/translations.php';
@@ -20,6 +35,7 @@ try {
     die("Erreur lors de la récupération des articles : " . $e->getMessage());
 }
 
+// Inclure la barre latérale après les vérifications
 include 'includes/sidebar.php'; // Barre latérale
 ?>
 

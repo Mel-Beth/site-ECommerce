@@ -50,9 +50,8 @@ return [
         'view_details' => 'Voir les détails',
         'my_cart' => 'Mon panier',
         'stock_available' => 'Stock disponible',
-        'Connexion' => 'login_title',
         'login_title' => 'Se connecter à votre compte',
-        'login_button' => 'Connexion',
+        'login_button' => 'Se connecter',
         'register_button' => 'S\'inscrire',
         'furniture_bedding' => 'Literie',
         'furniture_lighting' => 'Luminaires',
@@ -85,6 +84,8 @@ return [
         'weights' => 'Poids',
         'balloons' => 'Ballons',
         'rackets' => 'Raquettes',
+        'invalid_email_format' => 'Format d\'email invalide.',
+        'logout' => 'Déconnexion',
     ],
     'en' => [
         'welcome' => 'Welcome to Empty Your Wallet',
@@ -136,7 +137,6 @@ return [
         'view_details' => 'View details',
         'my_cart' => 'My Cart',
         'stock_available' => 'Stock available',
-        'login_title' => 'Connexion',
         'login_title' => 'Log in to your account',
         'login_button' => 'Log In',
         'register_button' => 'Register',
@@ -170,6 +170,8 @@ return [
         'weights' => 'Weights',
         'balloons' => 'Balloons',
         'rackets' => 'Rackets',
+        'invalid_email_format' => 'Invalid email format',
+        'logout' => 'Logout',
     ],
 ];
 ?>
