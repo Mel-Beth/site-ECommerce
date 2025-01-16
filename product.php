@@ -1,13 +1,12 @@
 <?php
+include 'includes/head.php';
 include 'includes/header.php';
-include 'php/db.php'; // Connexion à la base de données
+include 'php/db.php';
 
-// Vérifier si un ID de produit est passé
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die("Produit non trouvé !");
 }
 
-// Récupérer les détails du produit depuis la base de données
 try {
     $stmt = $pdo->prepare("SELECT * FROM articles WHERE id = :id");
     $stmt->execute(['id' => $_GET['id']]);
@@ -20,31 +19,35 @@ try {
     die("Erreur lors de la récupération du produit : " . $e->getMessage());
 }
 
-include 'includes/sidebar.php'; // Barre latérale
+// Charger les traductions
+$translations = include 'includes/translations.php';
+
+// Définir la langue actuelle
+$lang = $_SESSION['lang'] ?? 'fr';
+
+// Charger les traductions pour la langue actuelle
+$t = $translations[$lang];
+
+include 'includes/sidebar.php';
 ?>
 
 <main class="ml-60 p-6">
     <div class="flex flex-wrap">
-        <!-- Image du produit -->
         <div class="w-full md:w-1/2 p-4">
             <img src="<?= htmlspecialchars($product['image'] ?? 'assets/images/default.png') ?>" alt="<?= htmlspecialchars($product['name']) ?>" class="w-full rounded-lg shadow-md">
         </div>
 
-        <!-- Détails du produit -->
         <div class="w-full md:w-1/2 p-4">
             <h1 class="text-3xl font-bold"><?= htmlspecialchars($product['name']) ?></h1>
             <p class="text-gray-700 mt-4"><?= nl2br(htmlspecialchars($product['description'])) ?></p>
             <p class="text-2xl font-bold text-yellow-500 mt-4"><?= number_format($product['price'], 2) ?> €</p>
-            <p class="text-gray-600 mt-2">Stock disponible : <?= $product['stock'] ?></p>
+            <p class="text-gray-600 mt-2"><?= $t['stock_available'] ?>: <?= $product['stock'] ?></p>
             
-            <!-- Ajouter au panier -->
             <form method="post" action="cart.php" class="mt-6">
                 <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                <label for="quantity" class="block text-gray-700">Quantité :</label>
+                <label for="quantity" class="block text-gray-700"><?= $t['quantity'] ?>:</label>
                 <input type="number" id="quantity" name="quantity" value="1" min="1" max="<?= $product['stock'] ?>" class="w-20 p-2 border rounded">
-                <button type="submit" class="mt-4 bg-yellow-500 text-white px-6 py-2 rounded hover:bg-yellow-600">
-                    Ajouter au panier
-                </button>
+                <button type="submit" class="mt-4 bg-yellow-500 text-white px-6 py-2 rounded hover:bg-yellow-600"><?= $t['add_to_cart'] ?></button>
             </form>
         </div>
     </div>

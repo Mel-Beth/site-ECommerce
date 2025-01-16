@@ -1,5 +1,4 @@
 <?php
-session_start();
 include 'php/db.php'; // Connexion à la base de données
 
 $error = '';
@@ -16,41 +15,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user && password_verify($password, $user['password'])) {
-                // Stocker les informations dans la session
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['nom'];
                 $_SESSION['role'] = $user['role'];
 
                 // Rediriger vers le tableau de bord ou la page d'accueil
-                $redirect = ($user['role'] === 'admin') ? '/admin/dashboard.php' : '/index.php';
+                $redirect = ($user['role'] === 'admin') ? 'admin/dashboard.php' : 'index.php';
                 header("Location: $redirect");
                 exit();
             } else {
-                $error = "Email ou mot de passe incorrect.";
+                $error = "email_or_password_incorrect";
             }
         } catch (PDOException $e) {
-            $error = "Erreur de connexion : " . $e->getMessage();
+            $error = "connection_error";
         }
     } else {
-        $error = "Veuillez remplir tous les champs.";
+        $error = "fill_all_fields";
     }
 }
-?>
 
-<?php include 'includes/header.php'; ?>
+include 'includes/head.php';
+include 'includes/header.php';
+include 'includes/sidebar.php';
+
+// Charger les traductions
+$translations = include 'includes/translations.php';
+
+// Définir la langue actuelle
+$lang = $_SESSION['lang'] ?? 'fr';
+
+// Charger les traductions pour la langue actuelle
+$t = $translations[$lang];
+?>
 
 <main class="flex items-center justify-center h-screen bg-gray-100">
     <div class="bg-white p-8 rounded-lg shadow-lg w-96">
-        <h1 class="text-2xl font-bold mb-4">Connexion</h1>
+        <h1 class="text-2xl font-bold mb-4"><?= $t['login_title'] ?></h1>
         <?php if ($error): ?>
-            <p class="text-red-500 mb-4"><?= htmlspecialchars($error) ?></p>
+            <p class="text-red-500 mb-4"><?= htmlspecialchars($t[$error]) ?></p>
         <?php endif; ?>
         <form method="post" action="">
-            <label for="email" class="block text-gray-700">Email :</label>
+            <label for="email" class="block text-gray-700"><?= $t['email'] ?>:</label>
             <input type="email" id="email" name="email" class="w-full p-2 border rounded mb-4" required>
-            <label for="password" class="block text-gray-700">Mot de passe :</label>
+            <label for="password" class="block text-gray-700"><?= $t['password'] ?>:</label>
             <input type="password" id="password" name="password" class="w-full p-2 border rounded mb-4" required>
-            <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 w-full">Se connecter</button>
+            <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 w-full"><?= $t['login_button'] ?></button>
         </form>
     </div>
 </main>

@@ -1,25 +1,128 @@
 /* Positionnement principal */
 body {
     margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 main {
-    margin-left: 240px; /* Largeur de la sidebar */
-    margin-top: 64px; /* Hauteur du header */
+    margin-left: 240px;
+    margin-top: 72px;
     padding: 16px;
+    flex: 1;
 }
 
 @media (max-width: 768px) {
-    aside {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease-in-out;
-    }
-
-    aside.active {
-        transform: translateX(0);
-    }
-
     main {
         margin-left: 0;
+        margin-top: 56px; /* Réduction de la marge pour petits écrans */
+        padding: 12px;
+    }
+}
+
+/* Barre de recherche */
+input[type="text"]::placeholder {
+    color: #cbd5e0;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #fbbf24;
+}
+
+@media (max-width: 768px) {
+    input[type="text"] {
+        width: 100%;
+        font-size: 0.9rem;
+    }
+}
+
+/* Dropdown menu styles */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+    z-index: 10;
+    min-width: 200px;
+    padding: 0.5rem;
+}
+
+.group:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-menu li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dropdown-menu p {
+    font-size: 0.875rem;
+    color: gray;
+}
+
+.dropdown-menu a {
+    display: block;
+    color: black;
+    padding: 0.5rem;
+    text-decoration: none;
+    border-radius: 0.25rem;
+}
+
+.dropdown-menu a:hover {
+    background-color: #f3f4f6;
+}
+
+/* Carousel */
+#carousel {
+    height: 15rem;
+    position: relative;
+    overflow: hidden;
+}
+
+#carousel img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+@media (max-width: 768px) {
+    #carousel {
+        height: 12rem; /* Réduction de la hauteur sur petits écrans */
+    }
+}
+
+@media (max-width: 480px) {
+    #carousel {
+        height: 10rem; /* Encore plus réduit sur très petits écrans */
+    }
+}
+
+/* Footer */
+footer {
+    background: #2d3748;
+    color: white;
+    padding: 16px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    footer {
+        font-size: 0.875rem; /* Taille réduite pour le texte */
+        padding: 12px;
     }
 }

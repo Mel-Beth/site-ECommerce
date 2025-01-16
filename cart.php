@@ -1,6 +1,15 @@
 <?php
+include 'includes/head.php';
 include 'includes/header.php';
-session_start();
+
+// Charger les traductions
+$translations = include 'includes/translations.php';
+
+// Définir la langue actuelle
+$lang = $_SESSION['lang'] ?? 'fr';
+
+// Charger les traductions pour la langue actuelle
+$t = $translations[$lang];
 
 // Initialiser le panier si nécessaire
 if (!isset($_SESSION['cart'])) {
@@ -35,13 +44,14 @@ if (!empty($_SESSION['cart'])) {
         $total_price += $item['price'] * $item['quantity'];
     }
 }
+include 'includes/sidebar.php'; // Barre latérale
 ?>
 
-<main class="p-6">
-    <h1 class="text-3xl font-bold mb-6">Mon Panier</h1>
+<main class="flex-1">
+    <h1 class="text-3xl font-bold mb-6"><?= $t['my_cart'] ?></h1>
 
     <?php if (empty($cart_items)): ?>
-        <p class="text-gray-500">Votre panier est vide.</p>
+        <p class="text-gray-500"><?= $t['empty_cart'] ?></p>
     <?php else: ?>
         <div class="space-y-4">
             <?php foreach ($cart_items as $item): ?>
@@ -58,10 +68,10 @@ if (!empty($_SESSION['cart'])) {
         </div>
 
         <div class="mt-6">
-            <h2 class="text-xl font-bold">Total : <?= number_format($total_price, 2) ?> €</h2>
+            <h2 class="text-xl font-bold"><?= $t['total'] ?> : <?= number_format($total_price, 2) ?> €</h2>
             <form action="checkout.php" method="post" class="mt-4">
                 <button type="submit" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600">
-                    Valider la commande
+                    <?= $t['checkout'] ?>
                 </button>
             </form>
         </div>
