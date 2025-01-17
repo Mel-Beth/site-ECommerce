@@ -45,17 +45,30 @@ input[type="text"]:focus {
     display: none;
     position: absolute;
     top: 100%;
-    left: 0;
+    right: 0;  /* Positionner à droite de l'élément parent */
     background-color: white;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 0.5rem;
     z-index: 10;
     min-width: 200px;
+    max-width: 100vw;  /* Empêche le débordement à droite */
+    overflow-x: hidden;
     padding: 0.5rem;
+    opacity: 0; /* Masquer le menu */
+    visibility: hidden; /* Assurez-vous que le menu est invisible au départ */
+    transition: opacity 0.2s ease, visibility 0.2s ease; /* Transition douce */
 }
 
 .group:hover .dropdown-menu {
     display: block;
+    opacity: 1; /* Rendre le menu visible */
+    visibility: visible; /* Le menu devient visible */
+}
+
+.group:not(:hover) .dropdown-menu {
+    opacity: 0;
+    visibility: hidden;
+    transition-delay: 0s; /* Pas de délai avant de cacher */
 }
 
 .dropdown-menu ul {
@@ -103,6 +116,10 @@ input[type="text"]:focus {
 @media (max-width: 768px) {
     #carousel {
         height: 12rem; /* Réduction de la hauteur sur petits écrans */
+    }
+    .dropdown-menu {
+        width: 90vw;  /* Limiter la largeur du menu à 90% de la largeur de l'écran */
+        max-width: 90vw; /* Empêche le débordement horizontal */
     }
 }
 

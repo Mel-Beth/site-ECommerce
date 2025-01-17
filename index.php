@@ -1,31 +1,22 @@
 <?php
-session_start(); // S'assurer que la session est démarrée au début
 
-include 'includes/head.php';
-include 'includes/header.php'; // Inclure le header avant les redirections
 include 'php/db.php'; // Connexion à la base de données
 
 // Vérifier si l'utilisateur est connecté
 if (isset($_SESSION['user_id'])) {
-    if ($_SESSION['role'] == 'admin') {
-        // Redirige l'administrateur
+    if ($_SESSION['role'] === 'admin') {
         header('Location: admin/dashboard.php');
-        exit(); // Arrêter l'exécution après la redirection
+        exit(); // Toujours terminer après une redirection
     } else {
-        // Redirige l'utilisateur normal
         header('Location: user.php');
-        exit(); // Arrêter l'exécution après la redirection
+        exit();
     }
 }
 
 // Charger les traductions
 $translations = include 'includes/translations.php';
-
-// Définir la langue actuelle
-$lang = $_SESSION['lang'] ?? 'fr';
-
-// Charger les traductions pour la langue actuelle
-$t = $translations[$lang];
+$lang = $_SESSION['lang'] ?? 'fr'; // Langue par défaut : français
+$t = $translations[$lang]; // Charger les traductions pour la langue actuelle
 
 // Récupérer les produits depuis la base de données
 try {
@@ -35,9 +26,12 @@ try {
     die("Erreur lors de la récupération des articles : " . $e->getMessage());
 }
 
-// Inclure la barre latérale après les vérifications
-include 'includes/sidebar.php'; // Barre latérale
+// Inclure les éléments HTML après la logique PHP
+include 'includes/head.php';
+include 'includes/header.php';
+include 'includes/sidebar.php';
 ?>
+
 
 <main class="flex-1">
 

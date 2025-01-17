@@ -13,24 +13,37 @@ $user_id = $_SESSION['user_id'];
 $error = '';
 $success = '';
 
-// Récupération des informations utilisateur
-try {
-    $stmt = $pdo->prepare("SELECT nom, prenom, email FROM utilisateurs WHERE id = :id");
-    $stmt->execute(['id' => $user_id]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+// Récupération des informations utilisateur depuis la session
+if (isset($_SESSION['user_name']) && is_array($_SESSION['user_name'])) {
+    $nom = $_SESSION['user_name']['nom'];
+    $prenom = $_SESSION['user_name']['prenom'];  // Ajouter le prénom à la session
+    $email = $_SESSION['user_name']['email'];
+} else {
+    // Si la session ne contient pas les données, on les récupère depuis la base de données
+    try {
+        // Assurez-vous d'utiliser la colonne 'user_id' et pas 'id' si c'est la colonne correcte
+        $stmt = $pdo->prepare("SELECT nom, prenom, email FROM utilisateurs WHERE user_id = :user_id");
+        $stmt->execute(['user_id' => $user_id]);  // Remplacer 'user_id' par le bon identifiant
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$user) {
-        header('Location: logout.php');
-        exit();
+        if (!$user) {
+            header('Location: logout.php');
+            exit();
+        }
+
+        $nom = $user['nom'];
+        $prenom = $user['prenom'];  // Récupérer le prénom de la base de données
+        $email = $user['email'];
+    } catch (PDOException $e) {
+        $error = "Erreur lors de la récupération des données utilisateur. Détails: " . $e->getMessage();
     }
-} catch (PDOException $e) {
-    $error = "Erreur lors de la récupération des données utilisateur.";
 }
+
 
 // Mise à jour des informations utilisateur
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nom = $_POST['nom'] ?? '';
-    $prenom = $_POST['prenom'] ?? '';
+    $prenom = $_POST['prenom'] ?? '';  // Prendre en compte le prénom
     $email = $_POST['email'] ?? '';
 
     if (!empty($nom) && !empty($prenom) && !empty($email)) {
@@ -41,17 +54,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $pdo->prepare("
                     UPDATE utilisateurs 
                     SET nom = :nom, prenom = :prenom, email = :email 
-                    WHERE id = :id
+                    WHERE id = :user_id  // Assurez-vous d'utiliser le bon identifiant
                 ");
                 $stmt->execute([
                     'nom' => $nom,
-                    'prenom' => $prenom,
+                    'prenom' => $prenom,  // Mettre à jour le prénom
                     'email' => $email,
-                    'id' => $user_id,
+                    'user_id' => $user_id,
                 ]);
 
                 $success = "Informations mises à jour avec succès.";
-                $_SESSION['user_name'] = $nom;
+
+                // Mettre à jour la session avec les nouvelles informations
+                $_SESSION['user_name'] = [
+                    'nom' => $nom,
+                    'prenom' => $prenom,  // Ajouter le prénom à la session
+                    'email' => $email
+                ];
             } catch (PDOException $e) {
                 $error = "Erreur lors de la mise à jour des informations.";
             }
@@ -61,20 +80,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Récupération des commandes de l'utilisateur
+// Récupérer les commandes de l'utilisateur connecté
 try {
     $stmt = $pdo->prepare("
-        SELECT c.id, c.date_commande, c.total_price, COUNT(cd.id) as nb_articles 
+        SELECT c.id, c.created_at, c.total_price, c.status 
         FROM commandes c
-        LEFT JOIN commande_details cd ON c.id = cd.commande_id
         WHERE c.user_id = :user_id
-        GROUP BY c.id
-        ORDER BY c.date_commande DESC
+        ORDER BY c.created_at DESC
     ");
-    $stmt->execute(['user_id' => $user_id]);
+    $stmt->execute(['user_id' => $user_id]);  // Remplacez $user_id par l'ID de l'utilisateur connecté
     $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    $error = "Erreur lors de la récupération des commandes.";
+    $error = "Erreur lors de la récupération des commandes : " . $e->getMessage();
 }
 
 include 'includes/head.php';
@@ -95,13 +112,13 @@ include 'includes/sidebar.php';
         <h2 class="text-xl font-bold mb-4">Mes informations</h2>
         <form method="post" action="">
             <label for="nom" class="block text-gray-700">Nom :</label>
-            <input type="text" id="nom" name="nom" class="w-full p-2 border rounded mb-4" value="<?= htmlspecialchars($user['nom']) ?>" required>
+            <input type="text" id="nom" name="nom" class="w-full p-2 border rounded mb-4" value="<?= htmlspecialchars($nom ?? '') ?>" required>
 
             <label for="prenom" class="block text-gray-700">Prénom :</label>
-            <input type="text" id="prenom" name="prenom" class="w-full p-2 border rounded mb-4" value="<?= htmlspecialchars($user['prenom']) ?>" required>
+            <input type="text" id="prenom" name="prenom" class="w-full p-2 border rounded mb-4" value="<?= htmlspecialchars($prenom ?? '') ?>" required>
 
             <label for="email" class="block text-gray-700">Email :</label>
-            <input type="email" id="email" name="email" class="w-full p-2 border rounded mb-4" value="<?= htmlspecialchars($user['email']) ?>" required>
+            <input type="email" id="email" name="email" class="w-full p-2 border rounded mb-4" value="<?= htmlspecialchars($email ?? '') ?>" required>
 
             <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Mettre à jour</button>
         </form>
@@ -109,7 +126,7 @@ include 'includes/sidebar.php';
 
     <div class="bg-white p-6 rounded-lg shadow-md">
         <h2 class="text-xl font-bold mb-4">Mes commandes</h2>
-        <?php if ($orders): ?>
+        <?php if (isset($orders) && is_array($orders) && count($orders) > 0): ?>
             <table class="w-full border-collapse border border-gray-200">
                 <thead>
                     <tr>
@@ -123,9 +140,9 @@ include 'includes/sidebar.php';
                 <tbody>
                     <?php foreach ($orders as $order): ?>
                         <tr>
-                            <td class="border border-gray-200 p-2 text-center"><?= $order['id'] ?></td>
-                            <td class="border border-gray-200 p-2 text-center"><?= $order['date_commande'] ?></td>
-                            <td class="border border-gray-200 p-2 text-center"><?= $order['nb_articles'] ?></td>
+                            <td class="border border-gray-200 p-2 text-center"><?= htmlspecialchars($order['id']) ?></td>
+                            <td class="border border-gray-200 p-2 text-center"><?= isset($order['created_at']) ? htmlspecialchars($order['created_at']) : 'Non spécifiée' ?></td>
+                            <td class="border border-gray-200 p-2 text-center"><?= isset($order['nb_articles']) ? htmlspecialchars($order['nb_articles']) : '0' ?></td>
                             <td class="border border-gray-200 p-2 text-center"><?= number_format($order['total_price'], 2) ?> €</td>
                             <td class="border border-gray-200 p-2 text-center">
                                 <a href="order_details.php?id=<?= $order['id'] ?>" class="text-blue-500 hover:underline">Voir</a>

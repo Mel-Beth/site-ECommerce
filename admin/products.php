@@ -52,7 +52,7 @@ $t = $translations[$lang];
                 <i class="fas fa-truck"></i> <span>Commandes</span>
             </a>
             <a href="users.php" class="flex items-center space-x-3 text-white hover:text-yellow-200 p-3 rounded-lg">
-                <i class="fas fa-truck"></i> <span>Utilisateurs</span>
+                <i class="fas fa-user"></i> <span>Utilisateurs</span>
             </a>
         </nav>
     </aside>

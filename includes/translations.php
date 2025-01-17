@@ -86,6 +86,10 @@ return [
         'rackets' => 'Raquettes',
         'invalid_email_format' => 'Format d\'email invalide.',
         'logout' => 'Déconnexion',
+        'profile' => 'Mon profil',
+        'language' => 'Langue',
+        'update' => 'Mettre à jour',
+        'remove' => 'Supprimer', 
     ],
     'en' => [
         'welcome' => 'Welcome to Empty Your Wallet',
@@ -172,6 +176,10 @@ return [
         'rackets' => 'Rackets',
         'invalid_email_format' => 'Invalid email format',
         'logout' => 'Logout',
+        'profile' => 'Profile',
+        'language' => 'Language',
+        'update' => 'Update',
+        'remove' => 'Remove',
     ],
 ];
 ?>
