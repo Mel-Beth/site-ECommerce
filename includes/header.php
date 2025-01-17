@@ -1,37 +1,8 @@
 <?php
-session_start(); // Toujours au début pour démarrer la session
+include 'init.php'; // Inclure le fichier d'initialisation
 
-// Charger les traductions
-$translations = include 'translations.php';
-
-// Définir la langue par défaut si elle n'est pas définie
-if (!isset($_SESSION['lang'])) {
-    $_SESSION['lang'] = 'fr';
-}
-
-// Gérer le changement de langue
-if (isset($_GET['lang'])) {
-    $newLang = htmlspecialchars($_GET['lang']); // Sécuriser l'entrée
-    if (array_key_exists($newLang, $translations)) { // Vérifier si la langue est supportée
-        $_SESSION['lang'] = $newLang;
-    }
-    header('Location: ' . $_SERVER['PHP_SELF']);
-    exit();
-}
-
-// Définir la langue actuelle
-$lang = $_SESSION['lang'];
-$t = $translations[$lang]; // Traductions actuelles
-
-// Gestion du panier
-$cartItems = $_SESSION['cart'] ?? [];
-if (!is_array($cartItems)) {
-    $cartItems = []; // Garantir un tableau vide si nécessaire
-}
-
-// Informations utilisateur
-$userName = $_SESSION['user_name'] ?? null; // Nom de l'utilisateur si connecté
 ?>
+
 
 <header class="bg-gray-800 text-white shadow-md fixed top-0 left-60 right-0 h-16 flex items-center px-6 z-10">
     <div class="flex items-center space-x-4 flex-1">
@@ -48,6 +19,7 @@ $userName = $_SESSION['user_name'] ?? null; // Nom de l'utilisateur si connecté
     </div>
 
     <nav class="flex items-center space-x-6">
+        <!-- Changer de langue -->
         <div class="relative group">
             <a href="#"><?= $t['language'] ?></a>
             <div class="dropdown-menu hidden group-hover:block">
@@ -56,17 +28,19 @@ $userName = $_SESSION['user_name'] ?? null; // Nom de l'utilisateur si connecté
             </div>
         </div>
 
-        <?php if (isset($_SESSION['user_id'])): ?>
+        <!-- Utilisateur connecté -->
+        <?php if (isset($_SESSION['user'])): ?>
             <div class="flex items-center space-x-2">
                 <a href="user.php" class="text-yellow-500 hover:underline">
-                    <span>Bonjour, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Invité') ?> !</span>
+                    <span>Bonjour, <?= htmlspecialchars($userPrenom) ?> !</span>
                 </a>
             </div>
-            <?php if ($_SESSION['role'] == 'admin'): ?>
+            <?php if ($_SESSION['user']['role'] == 'admin'): ?>
                 <a href="admin/dashboard.php" class="text-yellow-500 hover:underline"><?= $t['admin_dashboard'] ?></a>
             <?php endif; ?>
             <a href="logout.php" class="text-yellow-500 hover:underline"><?= $t['logout'] ?></a>
         <?php else: ?>
+            <!-- Connexion/Inscription -->
             <div class="relative group">
                 <a href="#" class="flex items-center space-x-1 hover:underline">
                     <span><?= $t['identify'] ?></span>
@@ -79,6 +53,7 @@ $userName = $_SESSION['user_name'] ?? null; // Nom de l'utilisateur si connecté
             </div>
         <?php endif; ?>
 
+        <!-- Panier -->
         <div class="relative group">
             <a href="#" class="flex items-center space-x-2">
                 <i class="fas fa-shopping-cart text-yellow-500"></i>

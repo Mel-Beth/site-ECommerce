@@ -1,7 +1,5 @@
 <?php
-include 'includes/head.php';
-include 'includes/header.php';
-include 'php/db.php';
+include 'includes/init.php'; // Inclure le fichier d'initialisation
 
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die("Produit non trouvé !");
@@ -19,17 +17,12 @@ try {
     die("Erreur lors de la récupération du produit : " . $e->getMessage());
 }
 
-// Charger les traductions
-$translations = include 'includes/translations.php';
-
-// Définir la langue actuelle
-$lang = $_SESSION['lang'] ?? 'fr';
-
-// Charger les traductions pour la langue actuelle
-$t = $translations[$lang];
-
+include 'includes/head.php';
+include 'includes/header.php';
 include 'includes/sidebar.php';
 ?>
+
+
 
 <main class="ml-60 p-6">
     <div class="flex flex-wrap">

@@ -1,5 +1,6 @@
 <?php
-include 'php/db.php';
+include 'includes/init.php'; // Inclure le fichier d'initialisation
+
 $error = '';
 $success = '';
 
@@ -37,19 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Charger les traductions
-$translations = include 'includes/translations.php';
-
-// Définir la langue actuelle
-$lang = $_SESSION['lang'] ?? 'fr';
-
-// Charger les traductions pour la langue actuelle
-$t = $translations[$lang];
-
 include 'includes/head.php';
 include 'includes/header.php';
 include 'includes/sidebar.php';
 ?>
+
+
 
 <main class="flex items-center justify-center h-screen bg-gray-100">
     <div class="bg-white p-8 rounded-lg shadow-lg w-96">

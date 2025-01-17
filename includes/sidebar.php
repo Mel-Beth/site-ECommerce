@@ -12,7 +12,7 @@
         <a href="cart.php" class="flex items-center space-x-3 text-white hover:text-yellow-200 p-3 rounded-lg">
             <i class="fas fa-shopping-cart"></i> <span><?= $t['cart'] ?></span>
         </a>
-        <?php if (isset($_SESSION['user_id'])): ?>
+        <?php if (isset($_SESSION['user'])): // Vérification de l'existence d'un utilisateur connecté ?>
             <a href="user.php" class="flex items-center space-x-3 text-white hover:text-yellow-200 p-3 rounded-lg">
                 <i class="fas fa-user"></i> <span><?= $t['my_account'] ?></span>
             </a>

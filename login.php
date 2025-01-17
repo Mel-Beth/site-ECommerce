@@ -1,57 +1,73 @@
 <?php
-include 'php/db.php'; // Connexion à la base de données
+include 'includes/init.php'; // Inclure le fichier d'initialisation
 
+// Vérifier si l'utilisateur est déjà connecté
+if (isset($_SESSION['user'])) {
+    // Si l'utilisateur est connecté, rediriger vers son compte (éviter boucle si déjà sur login.php)
+    if (basename($_SERVER['PHP_SELF']) !== 'login.php') {
+        header('Location: user.php');
+        exit();
+    }
+}
+
+// Traitement de la connexion
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
+    $email = trim($_POST['email'] ?? '');
+    $password = trim($_POST['password'] ?? '');
 
-    // Vérification des champs
     if (!empty($email) && !empty($password)) {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $error = "invalid_email_format";
+            $error = "Format d'email invalide.";
         } else {
             try {
                 $stmt = $pdo->prepare("SELECT * FROM utilisateurs WHERE email = :email AND etat = TRUE");
                 $stmt->execute(['email' => $email]);
-                $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                if ($user && password_verify($password, $user['password'])) {
-                    session_start();
-                    $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['user_name'] = $user['nom'];
-                    $_SESSION['role'] = $user['role'];
-
-                    $redirect = ($user['role'] === 'admin') ? 'admin/dashboard.php' : 'index.php';
-                    header("Location: $redirect");
-                    exit();
+                if ($stmt->rowCount() > 0) {
+                    $user = $stmt->fetch(PDO::FETCH_ASSOC);
                 } else {
-                    $error = "login_error";
+                    $error = "Aucun utilisateur trouvé avec cet email ou l'email est désactivé.";
+                }
+
+                if (isset($user)) {
+                    if (password_verify($password, $user['password'])) {
+                        $_SESSION['user'] = [
+                            'user_id' => $user['user_id'],
+                            'nom' => $user['nom'],
+                            'prenom' => $user['prenom'],
+                            'email' => $user['email'],
+                            'role' => $user['role'],
+                        ];
+
+                        $redirect = ($user['role'] === 'admin') ? 'admin/dashboard.php' : 'index.php';
+                        header("Location: $redirect");
+                        exit();
+                    } else {
+                        $error = "Mot de passe incorrect.";
+                    }
                 }
             } catch (PDOException $e) {
-                $error = "connection_error";
+                $error = "Erreur lors de la connexion à la base de données : " . $e->getMessage();
             }
         }
     } else {
-        $error = "fill_all_fields";
+        $error = "Les champs email et mot de passe sont obligatoires.";
     }
 }
 
 include 'includes/head.php';
 include 'includes/header.php';
 include 'includes/sidebar.php';
-
-$translations = include 'includes/translations.php';
-$lang = $_SESSION['lang'] ?? 'fr';
-$t = $translations[$lang];
 ?>
+
 
 <main class="flex items-center justify-center h-screen bg-gray-100">
     <div class="bg-white p-8 rounded-lg shadow-lg w-96">
         <h1 class="text-2xl font-bold mb-4"><?= $t['login_title'] ?></h1>
         <?php if ($error): ?>
-            <p class="text-red-500 mb-4"><?= htmlspecialchars($t[$error] ?? '') ?></p>
+            <p class="text-red-500 mb-4"><?= htmlspecialchars($error) ?></p>
         <?php endif; ?>
         <form method="post" action="">
             <label for="email" class="block text-gray-700"><?= $t['email'] ?>:</label>

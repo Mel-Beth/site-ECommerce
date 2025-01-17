@@ -89,7 +89,12 @@ return [
         'profile' => 'Mon profil',
         'language' => 'Langue',
         'update' => 'Mettre à jour',
-        'remove' => 'Supprimer', 
+        'remove' => 'Supprimer',
+        'admin_dashboard' => 'Tableau de bord administrateur',
+        'registration_error' => 'Erreur d\'inscription',
+        'user_profile' => 'Profil utilisateur',
+        'first_name' => 'Prénom',
+        'last_name' => 'Nom',
     ],
     'en' => [
         'welcome' => 'Welcome to Empty Your Wallet',
@@ -180,6 +185,11 @@ return [
         'language' => 'Language',
         'update' => 'Update',
         'remove' => 'Remove',
+        'admin_dashboard' => 'Admin Dashboard',
+        'registration_error' => 'Registration error',
+        'user_profile' => 'User profile',
+        'first_name' => 'First name',
+        'last_name' => 'Last name'
     ],
 ];
 ?>

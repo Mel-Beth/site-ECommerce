@@ -1,29 +1,27 @@
 <?php
-session_start();
+include 'includes/init.php'; // Inclure le fichier d'initialisation
 
 // Vérification si l'utilisateur est connecté
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user'])) {
+    // Si l'utilisateur n'est pas connecté, rediriger vers login.php
     header('Location: login.php');
     exit();
 }
 
-include 'php/db.php'; // Connexion à la base de données
-
-$user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['user']['user_id'];
 $error = '';
 $success = '';
 
 // Récupération des informations utilisateur depuis la session
-if (isset($_SESSION['user_name']) && is_array($_SESSION['user_name'])) {
-    $nom = $_SESSION['user_name']['nom'];
-    $prenom = $_SESSION['user_name']['prenom'];  // Ajouter le prénom à la session
-    $email = $_SESSION['user_name']['email'];
-} else {
-    // Si la session ne contient pas les données, on les récupère depuis la base de données
+$nom = $_SESSION['user']['nom'] ?? '';
+$prenom = $_SESSION['user']['prenom'] ?? '';
+$email = $_SESSION['user']['email'] ?? '';
+
+// Si les informations sont vides, les récupérer depuis la base de données
+if (empty($nom) || empty($prenom) || empty($email)) {
     try {
-        // Assurez-vous d'utiliser la colonne 'user_id' et pas 'id' si c'est la colonne correcte
         $stmt = $pdo->prepare("SELECT nom, prenom, email FROM utilisateurs WHERE user_id = :user_id");
-        $stmt->execute(['user_id' => $user_id]);  // Remplacer 'user_id' par le bon identifiant
+        $stmt->execute(['user_id' => $user_id]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$user) {
@@ -32,51 +30,19 @@ if (isset($_SESSION['user_name']) && is_array($_SESSION['user_name'])) {
         }
 
         $nom = $user['nom'];
-        $prenom = $user['prenom'];  // Récupérer le prénom de la base de données
+        $prenom = $user['prenom'];
         $email = $user['email'];
+
+        // Mise à jour des informations de session
+        $_SESSION['user'] = [
+            'user_id' => $user_id,
+            'nom' => $nom,
+            'prenom' => $prenom,
+            'email' => $email,
+            'role' => $_SESSION['user']['role'],
+        ];
     } catch (PDOException $e) {
-        $error = "Erreur lors de la récupération des données utilisateur. Détails: " . $e->getMessage();
-    }
-}
-
-
-// Mise à jour des informations utilisateur
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nom = $_POST['nom'] ?? '';
-    $prenom = $_POST['prenom'] ?? '';  // Prendre en compte le prénom
-    $email = $_POST['email'] ?? '';
-
-    if (!empty($nom) && !empty($prenom) && !empty($email)) {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $error = "Format de l'email invalide.";
-        } else {
-            try {
-                $stmt = $pdo->prepare("
-                    UPDATE utilisateurs 
-                    SET nom = :nom, prenom = :prenom, email = :email 
-                    WHERE id = :user_id  // Assurez-vous d'utiliser le bon identifiant
-                ");
-                $stmt->execute([
-                    'nom' => $nom,
-                    'prenom' => $prenom,  // Mettre à jour le prénom
-                    'email' => $email,
-                    'user_id' => $user_id,
-                ]);
-
-                $success = "Informations mises à jour avec succès.";
-
-                // Mettre à jour la session avec les nouvelles informations
-                $_SESSION['user_name'] = [
-                    'nom' => $nom,
-                    'prenom' => $prenom,  // Ajouter le prénom à la session
-                    'email' => $email
-                ];
-            } catch (PDOException $e) {
-                $error = "Erreur lors de la mise à jour des informations.";
-            }
-        }
-    } else {
-        $error = "Tous les champs doivent être remplis.";
+        $error = 'Erreur lors de la récupération des informations : ' . $e->getMessage();
     }
 }
 

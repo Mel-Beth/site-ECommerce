@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 // Vérifier si le produit est envoyé via POST
 if (isset($_POST['product_id']) && isset($_POST['quantity'])) {
