@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-    header('Location: login.php');
+    header('Location: ../login.php');
     exit();
 }
 
@@ -49,6 +49,7 @@ $t = $translations[$lang];
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard E-commerce</title>
+    <base href="http://localhost/projets/back/siteECommerce/">
 
     <!-- Intégration de Tailwind CSS pour le style et FontAwesome pour les icônes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />
@@ -96,7 +97,7 @@ $t = $translations[$lang];
         <!-- Hauteur définie à 16 unités, alignement horizontal des éléments -->
         <h1 class="text-xl font-bold text-yellow-700 flex-1">Dashboard E-commerce</h1>
         <!-- Texte jaune foncé, taille XL, gras, prend tout l'espace restant -->
-        <a href="../logout.php" class="text-yellow-500 hover:underline"><?= $t['logout'] ?></a>
+        <a href="logout.php" class="text-yellow-500 hover:underline"><?= $t['logout'] ?></a>
     </header>
 
     <main class="ml-60 mt-16 p-6">
@@ -119,7 +120,7 @@ $t = $translations[$lang];
         </div>
 
         <!-- Graphique des commandes par jour -->
-        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6 ">
             <h2 class="text-xl font-bold mb-4">Commandes et revenus par jour</h2>
             <canvas id="ordersChart"></canvas>
         </div>
