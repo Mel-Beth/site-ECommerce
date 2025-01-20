@@ -1,67 +1,14 @@
 <?php
-include 'includes/init.php'; // Inclure le fichier d'initialisation
+include 'includes/init.php';
 
-// Vérifier si l'utilisateur est déjà connecté
-if (isset($_SESSION['user'])) {
-    // Si l'utilisateur est connecté, rediriger vers son compte (éviter boucle si déjà sur login.php)
-    if (basename($_SERVER['PHP_SELF']) !== 'login.php') {
-        header('Location: user.php');
-        exit();
-    }
-}
-
-// Traitement de la connexion
-$error = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email'] ?? '');
-    $password = trim($_POST['password'] ?? '');
-
-    if (!empty($email) && !empty($password)) {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $error = "Format d'email invalide.";
-        } else {
-            try {
-                $stmt = $pdo->prepare("SELECT * FROM utilisateurs WHERE email = :email AND etat = TRUE");
-                $stmt->execute(['email' => $email]);
-
-                if ($stmt->rowCount() > 0) {
-                    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-                } else {
-                    $error = "Aucun utilisateur trouvé avec cet email ou l'email est désactivé.";
-                }
-
-                if (isset($user)) {
-                    if (password_verify($password, $user['password'])) {
-                        $_SESSION['user'] = [
-                            'user_id' => $user['user_id'],
-                            'nom' => $user['nom'],
-                            'prenom' => $user['prenom'],
-                            'email' => $user['email'],
-                            'role' => $user['role'],
-                        ];
-
-                        $redirect = ($user['role'] === 'admin') ? 'admin/dashboard.php' : 'index.php';
-                        header("Location: $redirect");
-                        exit();
-                    } else {
-                        $error = "Mot de passe incorrect.";
-                    }
-                }
-            } catch (PDOException $e) {
-                $error = "Erreur lors de la connexion à la base de données : " . $e->getMessage();
-            }
-        }
-    } else {
-        $error = "Les champs email et mot de passe sont obligatoires.";
-    }
-}
+// Récupérer les éventuelles erreurs de connexion
+$error = $_SESSION['login_error'] ?? '';
+unset($_SESSION['login_error']); // Supprimer l'erreur après l'affichage
 
 include 'includes/head.php';
 include 'includes/header.php';
 include 'includes/sidebar.php';
 ?>
-
 
 <main class="flex items-center justify-center h-screen bg-gray-100">
     <div class="bg-white p-8 rounded-lg shadow-lg w-96">
