@@ -95,6 +95,9 @@ return [
         'user_profile' => 'Profil utilisateur',
         'first_name' => 'Prénom',
         'last_name' => 'Nom',
+        'description' => 'Déscription',
+        'stock' => 'Stock',
+
     ],
     'en' => [
         'welcome' => 'Welcome to Empty Your Wallet',
@@ -189,7 +192,9 @@ return [
         'registration_error' => 'Registration error',
         'user_profile' => 'User profile',
         'first_name' => 'First name',
-        'last_name' => 'Last name'
+        'last_name' => 'Last name',
+        'description' => 'Description',
+        'stock' => 'Stock',
     ],
 ];
 ?>

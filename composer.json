@@ -1,0 +1,15 @@
+{
+    "name": "alaji/site-ecommerce",
+    "autoload": {
+        "psr-4": {
+            "Alaji\\SiteEcommerce\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mélanie Bethermat",
+            "email": "melaniebethermat@gmail.com"
+        }
+    ],
+    "require": {}
+}

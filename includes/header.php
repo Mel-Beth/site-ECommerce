@@ -72,7 +72,7 @@ include 'init.php'; // Inclure le fichier d'initialisation
                         include 'php/db.php';
                         $ids = implode(',', array_keys($cartItems));
                         $stmt = $pdo->query("SELECT id, name, price FROM articles WHERE id IN ($ids)");
-                        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        $products = $stmt->fetchAll();
 
                         // Associer les quantités avec les produits
                         foreach ($products as $product):

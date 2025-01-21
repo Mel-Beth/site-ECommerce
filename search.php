@@ -8,7 +8,7 @@ if (isset($_GET['q'])) {
     try {
         $stmt = $pdo->prepare("SELECT * FROM articles WHERE name LIKE :search OR description LIKE :search");
         $stmt->execute(['search' => $search]);
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $results = $stmt->fetchAll();
     } catch (PDOException $e) {
         die("Erreur de recherche : " . $e->getMessage());
     }

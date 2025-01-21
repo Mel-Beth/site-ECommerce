@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'], $_POST['pass
                 $stmt->execute(['email' => $email]);
 
                 if ($stmt->rowCount() > 0) {
-                    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $user = $stmt->fetch();
 
                     if (password_verify($password, $user['password'])) {
                         // Vérification du rôle utilisateur

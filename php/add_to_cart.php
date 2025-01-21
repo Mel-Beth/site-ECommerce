@@ -1,13 +1,17 @@
 <?php
 
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Vérifier si le produit est envoyé via POST
-if (isset($_POST['product_id']) && isset($_POST['quantity'])) {
+if (isset($_POST['id']) && isset($_POST['quantity'])) {  // Changer 'product_id' par 'id'
     // Vérifier si le panier existe dans la session, sinon l'initialiser
     if (!isset($_SESSION['cart'])) {
         $_SESSION['cart'] = [];
     }
 
-    $productId = intval($_POST['product_id']);
+    $productId = intval($_POST['id']);  // Changer 'product_id' par 'id'
     $quantity = intval($_POST['quantity']);
 
     // Si la quantité est valide, ajouter ou mettre à jour le produit dans le panier
@@ -23,3 +27,4 @@ if (isset($_POST['product_id']) && isset($_POST['quantity'])) {
 // Rediriger vers le panier
 header('Location: ../cart.php');
 exit();
+?>

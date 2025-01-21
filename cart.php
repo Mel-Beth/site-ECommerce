@@ -48,7 +48,7 @@ $total_price = 0;
 if (!empty($_SESSION['cart'])) {
     $ids = implode(',', array_keys($_SESSION['cart']));
     $stmt = $pdo->query("SELECT * FROM articles WHERE id IN ($ids)");
-    $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $cart_items = $stmt->fetchAll();
 
     foreach ($cart_items as &$item) {
         $item['quantity'] = $_SESSION['cart'][$item['id']];

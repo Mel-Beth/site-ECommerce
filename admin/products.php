@@ -1,4 +1,14 @@
 <?php
+include '../php/db.php'; // Connexion à la BDD
+
+// Récupérer tous les produits
+try {
+    $query = $pdo->query("SELECT * FROM articles");
+    $articles = $query->fetchAll();
+} catch (PDOException $e) {
+    die("Erreur lors de la récupération des articles : " . $e->getMessage());
+}
+
 // Charger les traductions
 $translations = include '../includes/translations.php';
 
@@ -9,6 +19,7 @@ $lang = $_SESSION['lang'] ?? 'fr';
 $t = $translations[$lang];
 
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -69,8 +80,6 @@ $t = $translations[$lang];
     <main></main>
 
     <?php include '../includes/footer.php'; ?>
-
-
 </body>
 
 </html>

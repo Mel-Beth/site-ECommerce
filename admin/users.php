@@ -1,10 +1,4 @@
 <?php
-session_start();
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header('Location: /index.php');
-    exit();
-}
-
 include '../php/db.php'; // Connexion à la BDD
 
 // Suppression ou mise à jour d'un utilisateur

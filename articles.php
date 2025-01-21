@@ -1,12 +1,11 @@
 <?php
-include 'includes/head.php';
-include 'includes/header.php';
+include 'includes/init.php'; // Inclure le fichier d'initialisation
 include 'php/db.php'; // Connexion à la base de données
 
 // Récupérer tous les produits
 try {
     $query = $pdo->query("SELECT * FROM articles");
-    $articles = $query->fetchAll(PDO::FETCH_ASSOC);
+    $articles = $query->fetchAll();
 } catch (PDOException $e) {
     die("Erreur lors de la récupération des articles : " . $e->getMessage());
 }
@@ -20,6 +19,8 @@ $lang = $_SESSION['lang'] ?? 'fr';
 // Charger les traductions pour la langue actuelle
 $t = $translations[$lang];
 
+include 'includes/head.php';
+include 'includes/header.php';
 include 'includes/sidebar.php'; // Barre latérale
 ?>
 

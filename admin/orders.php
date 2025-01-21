@@ -1,10 +1,4 @@
 <?php
-session_start();
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header('Location: /index.php');
-    exit();
-}
-
 include '../php/db.php'; // Connexion à la BDD
 
 // Mise à jour du statut de commande

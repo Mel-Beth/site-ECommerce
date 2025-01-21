@@ -22,7 +22,7 @@ if (empty($nom) || empty($prenom) || empty($email)) {
     try {
         $stmt = $pdo->prepare("SELECT nom, prenom, email FROM utilisateurs WHERE user_id = :user_id");
         $stmt->execute(['user_id' => $user_id]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        $user = $stmt->fetch();
 
         if (!$user) {
             header('Location: logout.php');
@@ -55,7 +55,7 @@ try {
         ORDER BY c.created_at DESC
     ");
     $stmt->execute(['user_id' => $user_id]);  // Remplacez $user_id par l'ID de l'utilisateur connecté
-    $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $orders = $stmt->fetchAll();
 } catch (PDOException $e) {
     $error = "Erreur lors de la récupération des commandes : " . $e->getMessage();
 }

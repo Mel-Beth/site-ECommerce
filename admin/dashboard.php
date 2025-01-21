@@ -16,7 +16,7 @@ try {
         GROUP BY DATE(created_at)
         ORDER BY DATE(created_at) ASC
     ");
-    $stats = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stats = $stmt->fetchAll();
 
     // Commandes par catégorie
     $stmt = $pdo->query("
@@ -26,7 +26,7 @@ try {
         GROUP BY a.category
         ORDER BY commandes DESC
     ");
-    $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $categories = $stmt->fetchAll();
 } catch (PDOException $e) {
     die("Erreur lors de la récupération des statistiques : " . $e->getMessage());
 }
@@ -49,7 +49,7 @@ $t = $translations[$lang];
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard E-commerce</title>
-    <base href="http://localhost/projets/back/siteECommerce/">
+    <base href="http://localhost/projets/back/siteECommerce/admin/">
 
     <!-- Intégration de Tailwind CSS pour le style et FontAwesome pour les icônes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />
@@ -97,7 +97,7 @@ $t = $translations[$lang];
         <!-- Hauteur définie à 16 unités, alignement horizontal des éléments -->
         <h1 class="text-xl font-bold text-yellow-700 flex-1">Dashboard E-commerce</h1>
         <!-- Texte jaune foncé, taille XL, gras, prend tout l'espace restant -->
-        <a href="logout.php" class="text-yellow-500 hover:underline"><?= $t['logout'] ?></a>
+        <a href="../logout.php" class="text-yellow-500 hover:underline"><?= $t['logout'] ?></a>
     </header>
 
     <main class="ml-60 mt-16 p-6">
