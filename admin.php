@@ -11,6 +11,5 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Appel du routeur
-require("./routeur.php");
-?>
+// Appel du routeur admin
+require("./src/admin/admin_routeur.php");

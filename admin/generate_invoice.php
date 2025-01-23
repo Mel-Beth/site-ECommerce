@@ -12,11 +12,12 @@ if (!$commandeId) {
 // Récupérer les détails de la commande
 try {
     $stmt = $pdo->prepare("
-        SELECT c.id, c.user_name, c.total_price, c.created_at, c.updated_at, cd.quantity, a.name AS article_name, a.price AS article_price
+        SELECT c.id_commande, c.date_commande, c.montant_ttc, m.pseudo_membre, a.lib_article, a.prix, co.quantite
         FROM commandes c
-        LEFT JOIN commande_details cd ON c.id = cd.commande_id
-        LEFT JOIN articles a ON cd.article_id = a.id
-        WHERE c.id = :id
+        JOIN membres m ON c.id_membre = m.id_membre
+        JOIN contenir co ON c.id_commande = co.id_commande
+        JOIN articles a ON co.id_article = a.id_article
+        WHERE c.id_commande = :id
     ");
     $stmt->execute(['id' => $commandeId]);
     $commande = $stmt->fetchAll();
@@ -48,12 +49,12 @@ $pdf->Ln(10);
 $pdf->SetFont('Arial', 'B', 14);
 $pdf->Cell(0, 10, 'Facture #'.$commandeId, 0, 1, 'C');
 $pdf->SetFont('Arial', '', 12);
-$pdf->Cell(0, 10, 'Date de la commande : ' . $commande[0]['created_at'], 0, 1, 'C');
+$pdf->Cell(0, 10, 'Date de la commande : ' . $commande[0]['date_commande'], 0, 1, 'C');
 $pdf->Ln(10);
 
 // Détails du client
 $pdf->SetFont('Arial', 'B', 12);
-$pdf->Cell(0, 10, 'Client : ' . $commande[0]['user_name'], 0, 1);
+$pdf->Cell(0, 10, 'Client : ' . $commande[0]['pseudo_membre'], 0, 1);
 $pdf->Ln(10);
 
 // Tableau des articles
@@ -66,17 +67,17 @@ $pdf->Cell(40, 10, 'Total', 1, 1, 'C', true);
 
 $pdf->SetFont('Arial', '', 12);
 foreach ($commande as $item) {
-    $pdf->Cell(90, 10, $item['article_name'], 1);
-    $pdf->Cell(30, 10, number_format($item['article_price'], 2) . ' €', 1);
-    $pdf->Cell(30, 10, $item['quantity'], 1);
-    $pdf->Cell(40, 10, number_format($item['article_price'] * $item['quantity'], 2) . ' €', 1);
+    $pdf->Cell(90, 10, $item['lib_article'], 1);
+    $pdf->Cell(30, 10, number_format($item['prix'], 2) . ' €', 1);
+    $pdf->Cell(30, 10, $item['quantite'], 1);
+    $pdf->Cell(40, 10, number_format($item['prix'] * $item['quantite'], 2) . ' €', 1);
     $pdf->Ln();
 }
 
 // Calcul TVA
 $tva_rate = 0.20; // TVA à 20%
-$tva_amount = $commande[0]['total_price'] * $tva_rate;
-$total_with_tva = $commande[0]['total_price'] + $tva_amount;
+$tva_amount = $commande[0]['montant_ttc'] * $tva_rate;
+$total_with_tva = $commande[0]['montant_ttc'] + $tva_amount;
 
 // Montant total
 $pdf->Ln(10);

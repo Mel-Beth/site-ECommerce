@@ -1,15 +1,22 @@
 {
     "name": "alaji/site-ecommerce",
     "autoload": {
-        "psr-4": {
-            "Alaji\\SiteEcommerce\\": "src/"
-        }
-    },
+    "psr-4": {
+        "Alaji\\SiteEcommerce\\": "src/",
+        "Controllers\\": "src/app/Controllers",
+        "Models\\": "src/app/Models",
+        "Admin\\Controllers\\": "admin/Controllers",
+        "Admin\\Models\\": "admin/Models"
+    }
+},
     "authors": [
         {
             "name": "Mélanie Bethermat",
             "email": "melaniebethermat@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "setasign/fpdf": "^1.8",
+        "vlucas/phpdotenv": "^5.6"
+    }
 }

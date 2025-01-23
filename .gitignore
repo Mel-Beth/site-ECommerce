@@ -1,1 +1,4 @@
-/vendor/
+# Fichiers qui ne seront pas versionnés afin de na pas finir sur Gtihub/Gitlab
+/vendor
+.env
+/node_modules
