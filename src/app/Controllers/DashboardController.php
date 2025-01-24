@@ -1,22 +1,20 @@
 <?php
 
-namespace Admin\Controllers;
+namespace Controllers;
 
-use Admin\Models\OrderModel;
-use Admin\Models\ProductModel;
+use Models\OrderModel;
+use Models\ProductModel;
 
 class DashboardController
 {
     public function index()
     {
-        // Récupérer les données nécessaires pour le tableau de bord
         $orderModel = new OrderModel();
         $productModel = new ProductModel();
 
         $stats = $orderModel->getDailyOrders();
         $categories = $productModel->getOrdersByCategory();
 
-        // Charger la vue
-        require __DIR__ . '/../Views/dashboard.php';
+        include("src/app/Views/admin/dashboard.php"); // Mettez à jour le chemin de la vue
     }
 }

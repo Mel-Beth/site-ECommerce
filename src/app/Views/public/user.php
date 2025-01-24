@@ -1,9 +1,6 @@
-<?php
-// Inclure les fichiers nécessaires
-require_once __DIR__ . '/includes/head.php';
-require_once __DIR__ . '/includes/header.php';
-require_once __DIR__ . '/includes/sidebar.php';
-?>
+<?php include('src/app/Views/includes/head.php'); ?>
+<?php include('src/app/Views/includes/header.php'); ?>
+<?php include('src/app/Views/includes/sidebar.php'); ?>
 
 <main class="ml-60 mt-16 p-6">
     <h1 class="text-2xl font-bold mb-6">Mon Profil</h1>
@@ -54,4 +51,4 @@ require_once __DIR__ . '/includes/sidebar.php';
     </div>
 </main>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php include('src/app/Views/includes/footer.php'); ?>

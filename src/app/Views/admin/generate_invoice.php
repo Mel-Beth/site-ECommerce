@@ -1,6 +1,5 @@
 <?php
-include '../libs/fpdf186/fpdf.php';
-include '../php/db.php'; // Connexion à la BDD
+require('/../vendor/setasign/fpdf/fpdf.php');
 
 // Vérification de l'ID de la commande
 $commandeId = $_GET['id'] ?? 0;

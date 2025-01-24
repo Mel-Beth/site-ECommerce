@@ -1,22 +1,23 @@
 <?php
-namespace Admin\Controllers;
 
-use Admin\Models\OrderModel;
+namespace Controllers;
 
-class OrdersController
+use Models\OrderModel;
+
+class OrderController
 {
     public function index()
     {
         $orderModel = new OrderModel();
         $orders = $orderModel->getAllOrders();
-        require __DIR__ . '/../Views/orders.php';
+        include('src/app/Views/admin/orders.php');
     }
 
     public function updateStatus($orderId, $status)
     {
         $orderModel = new OrderModel();
         $orderModel->updateOrderStatus($orderId, $status);
-        header('Location: /admin/orders');
+        header('Location: admin/orders');
         exit();
     }
 }

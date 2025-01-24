@@ -1,11 +1,11 @@
 <?php
-namespace Admin\Models;
+
+namespace Models;
 
 use Models\ModeleParent;
 
 class AdminModel extends ModeleParent
 {
-    // Méthodes spécifiques à l'admin
     public function getAdminByUsername($username)
     {
         $stmt = $this->pdo->prepare("

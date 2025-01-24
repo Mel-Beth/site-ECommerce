@@ -6,6 +6,15 @@ use Models\UserModel;
 
 class LoginController
 {
+    public function index()
+    {
+        // Affichage de la page de connexion
+        $error = $_SESSION['login_error'] ?? '';
+        unset($_SESSION['login_error']);
+
+        include('src/app/Views/public/login.php');
+    }
+
     public function login()
     {
         // Traitement du formulaire de connexion
@@ -25,6 +34,14 @@ class LoginController
                     $user = $userModel->authenticate($email, $password);
 
                     if ($user) {
+                        // Vérifier si l'utilisateur est un administrateur (id_role = 1)
+                        if ($user['id_role'] === 1) {
+                            // Rediriger l'administrateur vers la page de connexion admin
+                            $_SESSION['error'] = "Les administrateurs doivent se connecter via le panneau d'administration.";
+                            header('Location: /admin');
+                            exit();
+                        }
+
                         // Stockage des informations de l'utilisateur dans la session
                         $_SESSION['user'] = [
                             'id_membre' => $user['id_membre'],

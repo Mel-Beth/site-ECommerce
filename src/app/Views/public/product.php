@@ -1,6 +1,6 @@
-<?php require_once __DIR__ . '/includes/head.php'; ?>
-<?php require_once __DIR__ . '/includes/header.php'; ?>
-<?php require_once __DIR__ . '/includes/sidebar.php'; ?>
+<?php include('src/app/Views/includes/head.php'); ?>
+<?php include('src/app/Views/includes/header.php'); ?>
+<?php include('src/app/Views/includes/sidebar.php'); ?>
 
 <main class="flex-1 p-6">
     <?php if (isset($product)): ?>
@@ -42,4 +42,4 @@
     <?php endif; ?>
 </main>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php include('src/app/Views/includes/footer.php'); ?>

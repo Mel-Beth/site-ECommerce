@@ -10,7 +10,7 @@
     <div class="container mx-auto p-4">
         <h1 class="text-2xl font-bold mb-4">Éditer un Produit</h1>
 
-        <form method="post" action="/admin/products/update/<?= $product['id_article'] ?>">
+        <form method="post" action="admin/products/update/<?= $product['id_article'] ?>">
             <div class="mb-4">
                 <label for="name" class="block text-sm font-medium text-gray-700">Nom</label>
                 <input type="text" name="name" id="name" value="<?= htmlspecialchars($product['lib_article']) ?>" class="mt-1 p-2 border rounded w-full">

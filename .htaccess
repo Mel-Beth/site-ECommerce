@@ -1,6 +1,7 @@
+# Activation du moteur de réécriture URL
 RewriteEngine On
 
-# Redirige toutes les requêtes vers index.php
+# On définit une règle de réécriture : tout ce qui sera écrit après le chemin de notre site sera considéré comme la valeur de la variable $_GET["route"]
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php?page=$1 [L,QSA]
+RewriteCond %{REQUEST_URI}  !(\.png|\.jpg|\.gif|\.jpeg|\.zip|\.pdf|\.css|\.svg|\.js|\.md\.xml|\.json)$
+RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]

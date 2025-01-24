@@ -1,45 +1,31 @@
 <?php
-// Définir la racine du projet
-define('PROJECT_ROOT', __DIR__);
 
-// Charger l'autoloader de Composer
-require_once PROJECT_ROOT . '/vendor/autoload.php';
+// On retire les '/' en début et fin de l'URI
+$_GET["route"] = trim($_GET["route"], "/");
 
-// Démarrer la session
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+// On parse la variable de route dans un tableau 
+$route = explode("/", $_GET["route"]);
 
-// Définir des constantes pour les noms de pages
-define('PAGE_ACCUEIL', 'accueil');
+// Routage en fonction de la première case du tableau
 
-// Appel des namespaces
-use Controllers\AccueilController;
-use Controllers\ArticlesController;
-use Controllers\CartController;
-use Controllers\LoginController;
-use Controllers\ProductController;
-use Controllers\RegisterController;
-use Controllers\SearchController;
-use Controllers\UserController;
-
-// Définir la page par défaut
-$page = $_GET['page'] ?? PAGE_ACCUEIL;
-
-try {
-    switch ($page) {
-        case PAGE_ACCUEIL:
-            $controller = new AccueilController();
+// S'il n'existe pas de première case du tableau (rien dans l'URL après le nom du site)
+// alors on considère qu'on veut arriver sur la page d'accueil
+if (!isset($route[0]) || empty($route[0])) {
+    include("src/app/Views/public/accueil.php");
+} else {
+    switch ($route[0]) {
+        case 'accueil':
+            $controller = new Controllers\AccueilController();
             $controller->index();
             break;
 
         case 'articles':
-            $controller = new ArticlesController();
+            $controller = new Controllers\ArticlesController();
             $controller->index();
             break;
 
         case 'cart':
-            $controller = new CartController();
+            $controller = new Controllers\CartController();
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $data = json_decode(file_get_contents('php://input'), true);
                 if (isset($data['remove_product_id'])) {
@@ -55,7 +41,7 @@ try {
             break;
 
         case 'login':
-            $controller = new LoginController();
+            $controller = new Controllers\LoginController();
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $controller->login();
             } else {
@@ -64,7 +50,7 @@ try {
             break;
 
         case 'register':
-            $controller = new RegisterController();
+            $controller = new Controllers\RegisterController();
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $controller->register();
             } else {
@@ -74,7 +60,7 @@ try {
 
         case 'product':
             if (isset($_GET['id']) && ctype_digit($_GET['id'])) {
-                $controller = new ProductController();
+                $controller = new Controllers\ProductController();
                 $controller->show((int)$_GET['id']);
             } else {
                 throw new Exception("ID de produit invalide.");
@@ -82,23 +68,66 @@ try {
             break;
 
         case 'search':
-            $controller = new SearchController();
+            $controller = new Controllers\SearchController();
             $controller->index();
             break;
 
         case 'user':
-            $controller = new UserController();
+            $controller = new Controllers\UserController();
             $controller->profile();
+            break;
+
+        case 'logout':
+            require('logout.php');
+            break;
+
+        // Routes pour l'administration
+        case 'admin':
+            // Vérifier si l'utilisateur est connecté en tant qu'admin
+            if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+                header('Location: admin');
+                exit();
+            }
+
+            // Récupérer la sous-route admin
+            $adminRoute = $route[1] ?? 'dashboard'; // Correction ici
+
+            switch ($adminRoute) {
+                case 'dashboard':
+                    $controller = new Controllers\DashboardController();
+                    $controller->index();
+                    break;
+
+                case 'orders':
+                    $controller = new Controllers\OrderController(); // Correction ici (OrderController au lieu de OrdersController)
+                    $controller->index();
+                    break;
+
+                case 'products':
+                    $controller = new Controllers\ProductController();
+                    $controller->index();
+                    break;
+
+                case 'users':
+                    $controller = new Controllers\UserController(); // Correction ici (UserController au lieu de UsersController)
+                    $controller->profile();
+                    break;
+
+                case 'reviews':
+                    $controller = new Controllers\ReviewController(); // Correction ici (ReviewController au lieu de ReviewsController)
+                    $controller->index();
+                    break;
+
+                default:
+                    // Page admin non trouvée
+                    include('src/app/Views/404.php');
+                    exit();
+            }
             break;
 
         default:
             // Page non trouvée
-            header("HTTP/1.0 404 Not Found");
-            include PROJECT_ROOT . '/src/app/Views/404.php';
+            include('src/app/Views/404.php');
             exit();
     }
-} catch (Exception $e) {
-    $_SESSION['error'] = $e->getMessage();
-    header('Location: /error');
-    exit();
 }

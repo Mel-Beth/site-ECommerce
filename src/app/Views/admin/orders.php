@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Commandes</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
 </head>
-
 <body class="bg-gray-100">
     <div class="container mx-auto p-4">
         <h1 class="text-2xl font-bold mb-4">Gestion des Commandes</h1>
@@ -22,7 +20,7 @@
                     <p>Date : <?= htmlspecialchars($order['date_commande']) ?></p>
 
                     <div class="mt-4">
-                        <form method="post" action="/admin/orders/updateStatus">
+                        <form method="post" action="admin/orders/updateStatus">
                             <input type="hidden" name="orderId" value="<?= $order['id_commande'] ?>">
                             <select name="status" class="p-2 border rounded">
                                 <option value="0" <?= $order['statut_preparation'] === 0 ? 'selected' : '' ?>>En attente</option>
@@ -38,5 +36,4 @@
         <?php endif; ?>
     </div>
 </body>
-
 </html>

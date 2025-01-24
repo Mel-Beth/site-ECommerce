@@ -1,22 +1,23 @@
 <?php
-namespace Admin\Controllers;
 
-use Admin\Models\ReviewModel;
+namespace Controllers;
 
-class ReviewsController
+use Models\ReviewModel;
+
+class ReviewController
 {
     public function index()
     {
         $reviewModel = new ReviewModel();
         $reviews = $reviewModel->getAllReviews();
-        require __DIR__ . '/../Views/reviews.php';
+        include('src/app/Views/admin/reviews.php');
     }
 
     public function delete($reviewId)
     {
         $reviewModel = new ReviewModel();
         $reviewModel->deleteReview($reviewId);
-        header('Location: /admin/reviews');
+        header('Location: admin/reviews');
         exit();
     }
 }

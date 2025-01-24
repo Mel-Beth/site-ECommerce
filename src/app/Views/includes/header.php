@@ -1,12 +1,3 @@
-<?php
-// Inclure le fichier ModeleParent.php
-require_once __DIR__ . '/../../Models/ModeleParent.php';
-
-// Créer une instance de ModeleParent pour obtenir $pdo
-$modeleParent = new \Models\ModeleParent();
-$pdo = $modeleParent->getPdo(); // Utilisez cette méthode pour accéder à $pdo
-?>
-
 <header class="bg-gray-800 text-white shadow-md fixed top-0 left-60 right-0 h-16 flex items-center px-6 z-10">
     <div class="flex items-center space-x-4 flex-1">
         <h1 class="text-xl font-bold text-yellow-500">Bienvenue sur Vide Ton Porte-Monnaie</h1>
@@ -26,10 +17,9 @@ $pdo = $modeleParent->getPdo(); // Utilisez cette méthode pour accéder à $pdo
         <?php if (isset($_SESSION['user'])): ?>
             <div class="flex items-center space-x-2">
                 <a href="user" class="text-yellow-500 hover:underline">
-                    <span>Bonjour, <?= htmlspecialchars($_SESSION['user']['pseudo_membre'] ?? 'Utilisateur') ?> !</span> <!-- Correction ici -->
-                </a>
+                    <span>Bonjour, <?= htmlspecialchars($_SESSION['user']['pseudo_membre'] ?? 'Utilisateur') ?> !</span>
             </div>
-            <?php if ($_SESSION['user']['id_role'] === 1): ?> <!-- Correction ici -->
+            <?php if ($_SESSION['user']['id_role'] === 1): ?>
                 <a href="admin/dashboard" class="text-yellow-500 hover:underline">Tableau de Bord</a>
             <?php endif; ?>
             <a href="logout" class="text-yellow-500 hover:underline">Déconnexion</a>

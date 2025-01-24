@@ -1,6 +1,6 @@
-<?php require_once 'includes/head.php'; ?>
-<?php require_once 'includes/header.php'; ?>
-<?php require_once 'includes/sidebar.php'; ?>
+<?php include('src/app/Views/includes/head.php'); ?>
+<?php include('src/app/Views/includes/header.php'); ?>
+<?php include('src/app/Views/includes/sidebar.php'); ?>
 
 <main class="flex-1">
     <!-- Carrousel -->
@@ -266,4 +266,4 @@
     });
 </script>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php include('src/app/Views/includes/footer.php'); ?>

@@ -2,7 +2,7 @@
     <p>&copy; 2025 Vide Ton Porte-Monnaie - Tous droits réservés</p>
 </footer>
 
-<script src="./js/cart.js"></script>
+<script src="src/js/cart.js"></script>
 
 </body>
 </html>

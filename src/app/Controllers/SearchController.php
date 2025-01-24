@@ -12,6 +12,6 @@ class SearchController
         $searchModel = new SearchModel();
         $results = $searchModel->searchProducts($query);
 
-        include PROJECT_ROOT . '/src/app/Views/search.php';
+        include('src/app/Views/public/search.php');
     }
 }

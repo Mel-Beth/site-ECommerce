@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Avis</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
 </head>
-
 <body class="bg-gray-100">
     <div class="container mx-auto p-4">
         <h1 class="text-2xl font-bold mb-4">Gestion des Avis</h1>
@@ -29,7 +27,7 @@
                             <td class="p-2"><?= htmlspecialchars($review['pseudo_membre']) ?></td>
                             <td class="p-2"><?= htmlspecialchars($review['commentaire']) ?></td>
                             <td class="p-2">
-                                <form method="post" action="/admin/reviews/delete">
+                                <form method="post" action="admin/reviews/delete">
                                     <input type="hidden" name="reviewId" value="<?= $review['id_avis'] ?>">
                                     <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded">Supprimer</button>
                                 </form>
@@ -43,5 +41,4 @@
         <?php endif; ?>
     </div>
 </body>
-
 </html>

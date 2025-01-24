@@ -31,11 +31,21 @@ class UserController
             $orders = $userModel->getUserOrders($user_id);
 
             // Passer les données à la vue
-            include PROJECT_ROOT . '/src/app/Views/user.php';
+            include('src/app/Views/public/user.php');
         } catch (\PDOException $e) {
             // Gestion des erreurs
             $error = "Erreur lors de la récupération des informations : " . $e->getMessage();
-            include PROJECT_ROOT . '/src/app/Views/error.php';
+            include('src/app/Views/public/error.php');
         }
     }
+
+    public function updateRole($userId, $role)
+    {
+        $userModel = new UserModel();
+        $userModel->updateUserRole($userId, $role);
+        header('Location: admin/users');
+        exit();
+    }
 }
+
+?>

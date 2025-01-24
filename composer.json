@@ -2,7 +2,6 @@
     "name": "alaji/site-ecommerce",
     "autoload": {
     "psr-4": {
-        "Alaji\\SiteEcommerce\\": "src/",
         "Controllers\\": "src/app/Controllers",
         "Models\\": "src/app/Models",
         "Admin\\Controllers\\": "admin/Controllers",

@@ -6,7 +6,12 @@ use Models\ProductModel;
 
 class ProductController
 {
-    // Controllers/ProductController.php
+    public function index()
+    {
+        $productModel = new ProductModel();
+        $products = $productModel->getAllProducts();
+        include('src/app/Views/admin/products.php');
+    }
 
     public function show($productId)
     {
@@ -21,6 +26,15 @@ class ProductController
         }
 
         // Passer les données à la vue
-        include PROJECT_ROOT . '/src/app/Views/product.php';
+        include('src/app/Views/public/product.php');
+    }
+
+    public function edit($productId)
+    {
+        $productModel = new ProductModel();
+        $product = $productModel->getProductById($productId);
+        include('src/app/Views/admin/edit_product.php');
     }
 }
+
+?>

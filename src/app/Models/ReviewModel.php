@@ -1,5 +1,6 @@
 <?php
-namespace Admin\Models;
+
+namespace Models;
 
 use Models\ModeleParent;
 

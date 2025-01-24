@@ -2,6 +2,8 @@
 
 namespace Models;
 
+use Models\ModeleParent;
+
 class CartModel extends ModeleParent
 {
     public function getCartItems()

@@ -1,5 +1,6 @@
 <?php
-namespace Admin\Models;
+
+namespace Models;
 
 use Models\ModeleParent;
 
@@ -33,3 +34,5 @@ class OrderModel extends ModeleParent
             UPDATE commandes SET statut_preparation = :status WHERE id_commande = :id
         ");
         $stmt->execute(['status' => $status, 'id' => $orderId]);
+    }
+}

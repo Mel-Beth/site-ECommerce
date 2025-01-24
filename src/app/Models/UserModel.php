@@ -1,5 +1,8 @@
 <?php
+
 namespace Models;
+
+use Models\ModeleParent;
 
 class UserModel extends ModeleParent
 {
@@ -43,4 +46,14 @@ class UserModel extends ModeleParent
         $stmt->execute(['id_membre' => $userId]);
         return $stmt->fetchAll();
     }
+
+    public function updateUserRole($userId, $role)
+    {
+        $stmt = $this->pdo->prepare("
+            UPDATE membres SET id_role = :role WHERE id_membre = :id
+        ");
+        $stmt->execute(['role' => $role, 'id' => $userId]);
+    }
 }
+
+?>

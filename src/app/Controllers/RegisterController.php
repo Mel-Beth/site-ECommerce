@@ -8,7 +8,7 @@ class RegisterController
 {
     public function index()
     {
-        include PROJECT_ROOT . '/src/app/Views/register.php';
+        include('src/app/Views/public/register.php');
     }
 
     public function register()
@@ -16,17 +16,17 @@ class RegisterController
         $userModel = new UserModel();
 
         $data = [
-            'pseudo_membre' => $_POST['pseudo_membre'] ?? '', // Correction ici
-            'email' => $_POST['email'] ?? '', // Correction ici
-            'motdepasse' => $_POST['motdepasse'] ?? '', // Correction ici
-            'adresse' => $_POST['adresse'] ?? '', // Correction ici
+            'pseudo_membre' => $_POST['pseudo_membre'] ?? '',
+            'email' => $_POST['email'] ?? '',
+            'motdepasse' => $_POST['password'] ?? '',
+            'adresse' => $_POST['adresse'] ?? '',
         ];
 
         if ($userModel->register($data)) {
-            header('Location: login.php');
+            header('Location: login');
         } else {
             $error = 'Erreur lors de l’inscription.';
-            include PROJECT_ROOT . '/src/app/Views/register.php';
+            include('src/app/Views/public/register.php');
         }
     }
 }

@@ -1,6 +1,6 @@
-<?php require_once 'includes/head.php'; ?>
-<?php require_once 'includes/header.php'; ?>
-<?php require_once 'includes/sidebar.php'; ?>
+<?php include('src/app/Views/includes/head.php'); ?>
+<?php include('src/app/Views/includes/header.php'); ?>
+<?php include('src/app/Views/includes/sidebar.php'); ?>
 
 <main class="flex-1 p-6">
     <h2 class="text-2xl font-bold mb-6">Votre panier</h2>
@@ -78,4 +78,4 @@
     <?php endif; ?>
 </main>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php include('src/app/Views/includes/footer.php'); ?>
