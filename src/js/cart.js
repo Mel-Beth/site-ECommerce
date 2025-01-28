@@ -1,68 +1,83 @@
-// js/cart.js
-
 document.addEventListener("DOMContentLoaded", function () {
-    // Gérer la mise à jour de la quantité
-    const quantityInputs = document.querySelectorAll(".quantity-input");
+  const quantityInputs = document.querySelectorAll(".quantity-input");
+  if (quantityInputs) {
     quantityInputs.forEach((input) => {
       input.addEventListener("change", function () {
         const productId = this.getAttribute("data-product-id");
-        const quantity = this.value;
-  
-        console.log("Sending request to update quantity:", { product_id: productId, quantity: quantity }); // Log pour déboguer
-  
-        fetch(`cart`, {
+        const quantity = parseInt(this.value);
+
+        if (quantity < 1) {
+          alert("La quantité doit être supérieure à 0.");
+          this.value = 1; // Réinitialiser la quantité à 1
+          return;
+        }
+
+        fetch(`/api/cart/update`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "X-Requested-With": "XMLHttpRequest",
-            "Accept": "application/json",
           },
           body: JSON.stringify({ product_id: productId, quantity: quantity }),
         })
           .then((response) => {
             if (!response.ok) {
-              throw new Error("Network response was not ok");
+              throw new Error("Erreur réseau");
             }
             return response.json();
           })
           .then((data) => {
             if (data.success) {
-              window.location.reload(); // Recharger la page pour afficher la nouvelle quantité
+              // Mettre à jour le total du panier sans recharger la page
+              document.getElementById("cart-total").innerText = data.new_total;
             } else {
-              alert("Erreur lors de la mise à jour de la quantité");
+              alert("Erreur lors de la mise à jour de la quantité : " + data.message);
             }
           })
-          .catch((error) => console.error("Error:", error));
+          .catch((error) => {
+            console.error("Erreur :", error);
+            alert("Une erreur s'est produite lors de la mise à jour du panier.");
+          });
       });
     });
-  });
+  }
+});
 
-  // Gérer la suppression d'un article
-  const removeForms = document.querySelectorAll(".remove-form");
+const removeForms = document.querySelectorAll(".remove-form");
+if (removeForms) {
   removeForms.forEach((form) => {
     form.addEventListener("submit", function (event) {
       event.preventDefault();
 
+      if (!confirm("Êtes-vous sûr de vouloir supprimer cet article du panier ?")) {
+        return;
+      }
+
       const productId = this.getAttribute("data-product-id");
 
-      // Pour la suppression d'un article
-      fetch(`cart`, {
+      fetch(`/api/cart/remove`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "X-Requested-With": "XMLHttpRequest",
         },
-        body: JSON.stringify({ remove_product_id: productId }),
+        body: JSON.stringify({ product_id: productId }),
       })
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            window.location.reload(); // Recharger la page pour afficher le panier mis à jour
+            // Supprimer l'article du DOM sans recharger la page
+            const itemToRemove = document.getElementById(`cart-item-${productId}`);
+            if (itemToRemove) {
+              itemToRemove.remove();
+            }
+            // Mettre à jour le total du panier
+            document.getElementById("cart-total").innerText = data.new_total;
           } else {
-            alert("Erreur lors de la suppression de l'article");
+            alert("Erreur lors de la suppression de l'article : " + data.message);
           }
         })
-        .catch((error) => console.error("Error:", error));
+        .catch((error) => console.error("Erreur :", error));
     });
   });
-});
+}

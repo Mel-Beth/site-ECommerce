@@ -8,7 +8,6 @@ class UserController
 {
     public function profile()
     {
-        // Vérification si l'utilisateur est connecté
         if (!isset($_SESSION['user'])) {
             header('Location: login');
             exit();
@@ -18,24 +17,23 @@ class UserController
         $user_id = $_SESSION['user']['id_membre'];
 
         try {
-            // Récupération des informations de l'utilisateur
             $user = $userModel->getUserById($user_id);
 
             if (!$user) {
-                // Si l'utilisateur n'existe pas, rediriger vers la déconnexion
                 header('Location: logout');
                 exit();
             }
 
-            // Récupération des commandes de l'utilisateur
+            // Récupérer les commandes de l'utilisateur
             $orders = $userModel->getUserOrders($user_id);
 
-            // Passer les données à la vue
+            // Récupérer les adresses de l'utilisateur
+            $addresses = $userModel->getUserAddresses($user_id);
+
             include('src/app/Views/public/user.php');
         } catch (\PDOException $e) {
-            // Gestion des erreurs
             $error = "Erreur lors de la récupération des informations : " . $e->getMessage();
-            include('src/app/Views/public/error.php');
+            include('src/app/Views/404.php');
         }
     }
 
@@ -47,5 +45,3 @@ class UserController
         exit();
     }
 }
-
-?>

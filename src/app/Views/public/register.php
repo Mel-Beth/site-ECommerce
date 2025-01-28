@@ -2,12 +2,12 @@
 <?php include('src/app/Views/includes/header.php'); ?>
 <?php include('src/app/Views/includes/sidebar.php'); ?>
 
-<main class="flex-1 p-6">
+<main class="flex-1 p-6 ml-60 min-h-screen">
     <div class="max-w-sm mx-auto bg-white shadow-lg rounded-lg p-6">
         <h2 class="text-2xl font-bold mb-6 text-center">Créer un compte</h2>
         
         <!-- Formulaire d'inscription -->
-        <form method="POST" action="register.php">
+        <form method="POST" action="register">
             <!-- Champ pseudo -->
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="pseudo_membre">Pseudo</label>
@@ -33,6 +33,11 @@
                 </button>
             </div>
         </form>
+
+        <!-- Lien vers la page de connexion -->
+        <div class="mt-4 text-center">
+            <p>Déjà un compte ? <a href="login" class="text-yellow-500 hover:underline">Connectez-vous</a></p>
+        </div>
     </div>
 </main>
 

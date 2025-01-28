@@ -19,7 +19,6 @@ class ProductController
         $product = $productModel->getProductById($productId);
 
         if (!$product) {
-            // Gérer le cas où le produit n'existe pas
             $_SESSION['error'] = "Produit non trouvé.";
             header('Location: accueil');
             exit();
@@ -33,8 +32,16 @@ class ProductController
     {
         $productModel = new ProductModel();
         $product = $productModel->getProductById($productId);
+
+        if (!$product) {
+            $_SESSION['error'] = "Produit non trouvé.";
+            header('Location: admin/products');
+            exit();
+        }
+
+        // Récupérer les images du produit
+        $images = $productModel->getProductImages($productId);
+
         include('src/app/Views/admin/edit_product.php');
     }
 }
-
-?>

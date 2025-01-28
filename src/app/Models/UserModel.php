@@ -54,6 +54,25 @@ class UserModel extends ModeleParent
         ");
         $stmt->execute(['role' => $role, 'id' => $userId]);
     }
+
+    public function isEmailOrPseudoUsed($email, $pseudo)
+{
+    $stmt = $this->pdo->prepare("SELECT * FROM membres WHERE email = :email OR pseudo_membre = :pseudo");
+    $stmt->execute(['email' => $email, 'pseudo' => $pseudo]);
+    return $stmt->fetch() !== false;
 }
 
-?>
+public function getUserAddresses($userId)
+{
+    $sql = "SELECT * FROM adresses WHERE id_membre = :id_membre";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute(['id_membre' => $userId]);
+    return $stmt->fetchAll();
+}
+
+    public function addAddress($userId, $address)
+    {
+        $sql = "INSERT INTO adresses (id_membre, adresse) VALUES (:id_membre, :adresse)";
+        return $this->query($sql, ['id_membre' => $userId, 'adresse' => $address]);
+    }
+}

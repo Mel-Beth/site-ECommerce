@@ -17,6 +17,7 @@
                         <th class="p-2">ID</th>
                         <th class="p-2">Utilisateur</th>
                         <th class="p-2">Commentaire</th>
+                        <th class="p-2">Statut</th>
                         <th class="p-2">Actions</th>
                     </tr>
                 </thead>
@@ -26,7 +27,12 @@
                             <td class="p-2"><?= htmlspecialchars($review['id_avis']) ?></td>
                             <td class="p-2"><?= htmlspecialchars($review['pseudo_membre']) ?></td>
                             <td class="p-2"><?= htmlspecialchars($review['commentaire']) ?></td>
+                            <td class="p-2"><?= $review['approuve'] ? 'Approuvé' : 'En attente' ?></td>
                             <td class="p-2">
+                                <form method="post" action="admin/reviews/approve">
+                                    <input type="hidden" name="reviewId" value="<?= $review['id_avis'] ?>">
+                                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Approuver</button>
+                                </form>
                                 <form method="post" action="admin/reviews/delete">
                                     <input type="hidden" name="reviewId" value="<?= $review['id_avis'] ?>">
                                     <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded">Supprimer</button>

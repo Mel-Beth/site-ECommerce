@@ -10,6 +10,18 @@
     <div class="container mx-auto p-4">
         <h1 class="text-2xl font-bold mb-4">Gestion des Commandes</h1>
 
+        <!-- Filtres -->
+        <div class="mb-4">
+            <form method="GET" action="admin/orders">
+                <select name="statut" class="p-2 border rounded">
+                    <option value="">Tous les statuts</option>
+                    <option value="0" <?= isset($_GET['statut']) && $_GET['statut'] === '0' ? 'selected' : '' ?>>En attente</option>
+                    <option value="1" <?= isset($_GET['statut']) && $_GET['statut'] === '1' ? 'selected' : '' ?>>En préparation</option>
+                </select>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Filtrer</button>
+            </form>
+        </div>
+
         <?php if (!empty($orders)): ?>
             <?php foreach ($orders as $order): ?>
                 <div class="bg-white shadow-lg rounded-lg mb-6 p-4">
@@ -18,6 +30,10 @@
                     <p>Statut : <?= $order['statut_preparation'] ? 'En préparation' : 'En attente' ?></p>
                     <p>Total : <?= number_format($order['montant_ttc'], 2) ?> €</p>
                     <p>Date : <?= htmlspecialchars($order['date_commande']) ?></p>
+
+                    <div class="mt-4">
+                        <a href="admin/orders/details/<?= $order['id_commande'] ?>" class="bg-blue-500 text-white px-4 py-2 rounded">Voir les détails</a>
+                    </div>
 
                     <div class="mt-4">
                         <form method="post" action="admin/orders/updateStatus">

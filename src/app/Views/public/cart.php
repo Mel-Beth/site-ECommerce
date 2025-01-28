@@ -2,7 +2,7 @@
 <?php include('src/app/Views/includes/header.php'); ?>
 <?php include('src/app/Views/includes/sidebar.php'); ?>
 
-<main class="flex-1 p-6">
+<main class="flex-1 p-6 ml-60 min-h-screen">
     <h2 class="text-2xl font-bold mb-6">Votre panier</h2>
     <?php if (empty($products)): ?>
         <p>Votre panier est vide.</p>
@@ -62,15 +62,23 @@
                         </div>
                         <div class="flex justify-between">
                             <p>Livraison</p>
-                            <p class="font-bold">Gratuite</p>
+                            <p class="font-bold"><?= number_format($shippingCost, 2) ?> €</p>
+                        </div>
+                        <div class="flex justify-between">
+                            <p>Coupon de réduction</p>
+                            <p class="font-bold">-<?= number_format($discount, 2) ?> €</p>
                         </div>
                         <div class="flex justify-between">
                             <p>Total</p>
                             <p class="font-bold"><?= number_format(array_reduce($products, function ($total, $product) {
                                                         return $total + ($product['prix'] * ($product['quantity'] ?? 1));
-                                                    }, 0), 2) ?> €</p>
+                                                    }, 0) + $shippingCost - $discount, 2) ?> €</p>
                         </div>
                     </div>
+                    <form method="POST" action="cart/applyCoupon" class="mt-4">
+                        <input type="text" name="coupon" placeholder="Code promo" class="w-full p-2 border rounded">
+                        <button type="submit" class="w-full bg-yellow-500 text-white py-2 rounded-lg mt-2 hover:bg-yellow-600">Appliquer le coupon</button>
+                    </form>
                     <button class="w-full bg-yellow-500 text-white py-2 rounded-lg mt-6 hover:bg-yellow-600">Passer la commande</button>
                 </div>
             </div>

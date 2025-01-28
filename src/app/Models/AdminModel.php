@@ -14,4 +14,11 @@ class AdminModel extends ModeleParent
         $stmt->execute(['username' => $username]);
         return $stmt->fetch();
     }
+
+    public function addAdmin($data)
+    {
+        $sql = "INSERT INTO membres (pseudo_membre, email, motdepasse, date_inscription, id_role) VALUES (:pseudo_membre, :email, :motdepasse, NOW(), 1)";
+        $data['motdepasse'] = password_hash($data['motdepasse'], PASSWORD_BCRYPT);
+        return $this->query($sql, $data);
+    }
 }

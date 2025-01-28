@@ -15,6 +15,10 @@
         <a href="cart" class="flex items-center space-x-3 text-white hover:text-yellow-200 p-3 rounded-lg">
             <i class="fas fa-shopping-cart"></i> <span>Panier</span>
         </a>
+        <!-- Lien vers les promotions -->
+        <a href="promotions" class="flex items-center space-x-3 text-white hover:text-yellow-200 p-3 rounded-lg">
+            <i class="fas fa-tag"></i> <span>Promotions</span>
+        </a>
         <!-- Lien vers le profil utilisateur (si connecté) -->
         <?php if (isset($_SESSION['user'])): ?>
             <a href="user" class="flex items-center space-x-3 text-white hover:text-yellow-200 p-3 rounded-lg">

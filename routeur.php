@@ -1,15 +1,14 @@
 <?php
-
 // On retire les '/' en début et fin de l'URI
 $_GET["route"] = trim($_GET["route"], "/");
 
-// On parse la variable de route dans un tableau 
+// On parse la variable de route dans un tableau
 $route = explode("/", $_GET["route"]);
 
-// Routage en fonction de la première case du tableau
+// Nettoyage et validation de la route
+$route = array_map('htmlspecialchars', $route);
 
-// S'il n'existe pas de première case du tableau (rien dans l'URL après le nom du site)
-// alors on considère qu'on veut arriver sur la page d'accueil
+// Routage en fonction de la première case du tableau
 if (!isset($route[0]) || empty($route[0])) {
     include("src/app/Views/public/accueil.php");
 } else {
@@ -90,7 +89,7 @@ if (!isset($route[0]) || empty($route[0])) {
             }
 
             // Récupérer la sous-route admin
-            $adminRoute = $route[1] ?? 'dashboard'; // Correction ici
+            $adminRoute = $route[1] ?? 'dashboard';
 
             switch ($adminRoute) {
                 case 'dashboard':
@@ -99,22 +98,30 @@ if (!isset($route[0]) || empty($route[0])) {
                     break;
 
                 case 'orders':
-                    $controller = new Controllers\OrderController(); // Correction ici (OrderController au lieu de OrdersController)
-                    $controller->index();
+                    $controller = new Controllers\OrderController();
+                    if (isset($route[2]) && $route[2] === 'details' && isset($route[3])) {
+                        $controller->show((int)$route[3]);
+                    } else {
+                        $controller->index();
+                    }
                     break;
 
                 case 'products':
                     $controller = new Controllers\ProductController();
-                    $controller->index();
+                    if (isset($route[2]) && $route[2] === 'edit' && isset($route[3])) {
+                        $controller->edit((int)$route[3]);
+                    } else {
+                        $controller->index();
+                    }
                     break;
 
                 case 'users':
-                    $controller = new Controllers\UserController(); // Correction ici (UserController au lieu de UsersController)
+                    $controller = new Controllers\UserController();
                     $controller->profile();
                     break;
 
                 case 'reviews':
-                    $controller = new Controllers\ReviewController(); // Correction ici (ReviewController au lieu de ReviewsController)
+                    $controller = new Controllers\ReviewController();
                     $controller->index();
                     break;
 
@@ -131,3 +138,4 @@ if (!isset($route[0]) || empty($route[0])) {
             exit();
     }
 }
+?>

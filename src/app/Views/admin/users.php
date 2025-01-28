@@ -37,6 +37,7 @@
                                     </select>
                                     <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Mettre à jour</button>
                                 </form>
+                                <a href="admin/users/orders/<?= $user['id_membre'] ?>" class="bg-green-500 text-white px-4 py-2 rounded">Voir les commandes</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

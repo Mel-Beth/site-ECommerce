@@ -17,6 +17,7 @@
                         <th class="p-2">ID</th>
                         <th class="p-2">Nom</th>
                         <th class="p-2">Prix</th>
+                        <th class="p-2">Promotion</th>
                         <th class="p-2">Catégorie</th>
                         <th class="p-2">Actions</th>
                     </tr>
@@ -27,6 +28,7 @@
                             <td class="p-2"><?= htmlspecialchars($product['id_article']) ?></td>
                             <td class="p-2"><?= htmlspecialchars($product['lib_article']) ?></td>
                             <td class="p-2"><?= number_format($product['prix'], 2) ?> €</td>
+                            <td class="p-2"><?= htmlspecialchars($product['taux_promotion'] ?? 0) ?> %</td>
                             <td class="p-2"><?= htmlspecialchars($product['lib_categorie']) ?></td>
                             <td class="p-2">
                                 <a href="admin/products/edit/<?= $product['id_article'] ?>" class="bg-blue-500 text-white px-4 py-2 rounded">Éditer</a>

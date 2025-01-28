@@ -1,3 +1,9 @@
+<?php
+
+$modeleParent = new \Models\ModeleParent();
+$pdo = $modeleParent->getPdo();
+?>
+
 <header class="bg-gray-800 text-white shadow-md fixed top-0 left-60 right-0 h-16 flex items-center px-6 z-10">
     <div class="flex items-center space-x-4 flex-1">
         <h1 class="text-xl font-bold text-yellow-500">Bienvenue sur Vide Ton Porte-Monnaie</h1>
@@ -18,6 +24,7 @@
             <div class="flex items-center space-x-2">
                 <a href="user" class="text-yellow-500 hover:underline">
                     <span>Bonjour, <?= htmlspecialchars($_SESSION['user']['pseudo_membre'] ?? 'Utilisateur') ?> !</span>
+                </a>
             </div>
             <?php if ($_SESSION['user']['id_role'] === 1): ?>
                 <a href="admin/dashboard" class="text-yellow-500 hover:underline">Tableau de Bord</a>
@@ -52,25 +59,21 @@
                 <?php else: ?>
                     <ul class="space-y-2">
                         <?php
-                        // Récupérer les IDs des produits dans le panier
                         $ids = implode(',', array_keys($_SESSION['cart'] ?? []));
 
-                        // Vérifier si des IDs sont présents
                         if (!empty($ids)) {
-                            // Récupérer les produits depuis la base de données
-                            $stmt = $pdo->query("SELECT id_article, lib_article, prix FROM articles WHERE id_article IN ($ids)"); // Correction ici
+                            $stmt = $pdo->query("SELECT id_article, lib_article, prix FROM articles WHERE id_article IN ($ids)");
                             $products = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-                            // Afficher les produits dans le panier
                             foreach ($products as $product):
-                                $quantity = $_SESSION['cart'][$product['id_article']]; // Correction ici
-                                $totalPrice = $product['prix'] * $quantity; // Correction ici
+                                $quantity = $_SESSION['cart'][$product['id_article']];
+                                $totalPrice = $product['prix'] * $quantity;
                         ?>
                                 <li class="flex justify-between items-center">
-                                    <span class="font-semibold"><?= htmlspecialchars($product['lib_article']) ?></span> <!-- Correction ici -->
-                                    <span><?= $quantity ?> x <?= number_format($product['prix'], 2) ?> €</span> <!-- Correction ici -->
+                                    <span class="font-semibold"><?= htmlspecialchars($product['lib_article']) ?></span>
+                                    <span><?= $quantity ?> x <?= number_format($product['prix'], 2) ?> €</span>
                                     <form action="cart" method="POST" class="ml-2">
-                                        <input type="hidden" name="remove_product_id" value="<?= $product['id_article'] ?>"> <!-- Correction ici -->
+                                        <input type="hidden" name="remove_product_id" value="<?= $product['id_article'] ?>">
                                         <button type="submit" class="text-red-500 hover:text-red-700">
                                             <i class="fas fa-trash"></i>
                                         </button>

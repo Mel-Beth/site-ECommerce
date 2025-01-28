@@ -3,6 +3,7 @@
     "tailwindcss": "^3.4.17"
   },
   "dependencies": {
+    "@kurkle/color": "^0.3.4",
     "chart.js": "^4.4.7"
   }
 }

@@ -2,7 +2,7 @@
 <?php include('src/app/Views/includes/header.php'); ?>
 <?php include('src/app/Views/includes/sidebar.php'); ?>
 
-<main class="flex-1 p-6">
+<main class="flex-1 p-6 ml-60 min-h-screen">
     <div class="max-w-sm mx-auto bg-white shadow-lg rounded-lg p-6">
         <h2 class="text-2xl font-bold mb-6 text-center">Connexion</h2>
         
@@ -39,6 +39,24 @@
                 </button>
             </div>
         </form>
+
+        <!-- Lien pour réinitialiser le mot de passe -->
+        <div class="mt-4 text-center">
+            <a href="forgot-password" class="text-yellow-500 hover:underline">Mot de passe oublié ?</a>
+        </div>
+
+        <!-- Connexion sociale -->
+        <div class="mt-6">
+            <p class="text-center text-gray-700 mb-4">Ou connectez-vous avec</p>
+            <div class="flex justify-center space-x-4">
+                <a href="login/google" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                    <i class="fab fa-google"></i> Google
+                </a>
+                <a href="login/facebook" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    <i class="fab fa-facebook"></i> Facebook
+                </a>
+            </div>
+        </div>
     </div>
 </main>
 

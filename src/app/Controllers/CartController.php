@@ -17,7 +17,7 @@ class CartController
         $products = [];
         foreach ($cartItems as $productId => $quantity) {
             $product = $productModel->getProductById($productId);
-            if ($product) {
+            if ($product && $product['quantite_stock'] > 0) {
                 $products[] = [
                     'id_article' => $product['id_article'],
                     'lib_article' => $product['lib_article'],
@@ -38,29 +38,25 @@ class CartController
             $quantity = $_POST['quantity'] ?? 1;
 
             if ($productId) {
-                // Vérifiez le stock disponible
                 $productModel = new ProductModel();
                 $product = $productModel->getProductById($productId);
 
                 if (!$product) {
-                    // Produit non trouvé
                     $_SESSION['cart_error'] = "Produit non trouvé.";
                     header('Location: product?id=' . $productId);
                     exit();
                 }
 
-                // Vérifiez si la quantité demandée dépasse le stock disponible
+                // Vérification du stock
                 if ($quantity > $product['quantite_stock']) {
                     $_SESSION['cart_error'] = "La quantité demandée dépasse le stock disponible.";
                     header('Location: product?id=' . $productId);
                     exit();
                 }
 
-                // Ajoutez le produit au panier avec la quantité spécifiée
                 $cartModel = new CartModel();
                 $cartModel->addToCart($productId, $quantity);
 
-                // Redirigez l'utilisateur vers la page du panier
                 header('Location: cart');
                 exit();
             }

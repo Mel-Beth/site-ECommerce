@@ -18,7 +18,7 @@ main {
 @media (max-width: 768px) {
     main {
         margin-left: 0;
-        margin-top: 56px; /* Réduction de la marge pour petits écrans */
+        margin-top: 56px;
         padding: 12px;
     }
 }
@@ -45,30 +45,30 @@ input[type="text"]:focus {
     display: none;
     position: absolute;
     top: 100%;
-    right: 0;  /* Positionner à droite de l'élément parent */
+    right: 0;
     background-color: white;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 0.5rem;
     z-index: 10;
     min-width: 200px;
-    max-width: 100vw;  /* Empêche le débordement à droite */
+    max-width: 100vw;
     overflow-x: hidden;
     padding: 0.5rem;
-    opacity: 0; /* Masquer le menu */
-    visibility: hidden; /* Assurez-vous que le menu est invisible au départ */
-    transition: opacity 0.2s ease, visibility 0.2s ease; /* Transition douce */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
 .group:hover .dropdown-menu {
     display: block;
-    opacity: 1; /* Rendre le menu visible */
-    visibility: visible; /* Le menu devient visible */
+    opacity: 1;
+    visibility: visible;
 }
 
 .group:not(:hover) .dropdown-menu {
     opacity: 0;
     visibility: hidden;
-    transition-delay: 0s; /* Pas de délai avant de cacher */
+    transition-delay: 0s;
 }
 
 .dropdown-menu ul {
@@ -115,17 +115,17 @@ input[type="text"]:focus {
 
 @media (max-width: 768px) {
     #carousel {
-        height: 12rem; /* Réduction de la hauteur sur petits écrans */
+        height: 12rem;
     }
     .dropdown-menu {
-        width: 90vw;  /* Limiter la largeur du menu à 90% de la largeur de l'écran */
-        max-width: 90vw; /* Empêche le débordement horizontal */
+        width: 90vw;
+        max-width: 90vw;
     }
 }
 
 @media (max-width: 480px) {
     #carousel {
-        height: 10rem; /* Encore plus réduit sur très petits écrans */
+        height: 10rem;
     }
 }
 
@@ -139,7 +139,36 @@ footer {
 
 @media (max-width: 768px) {
     footer {
-        font-size: 0.875rem; /* Taille réduite pour le texte */
+        font-size: 0.875rem;
         padding: 12px;
     }
+}
+
+/* Style pour les alertes de stock bas */
+.stock-alert {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    color: #856404;
+}
+
+.stock-alert strong {
+    color: #856404;
+}
+
+/* Style pour le panier */
+.cart-item {
+    transition: background-color 0.3s ease;
+}
+
+.cart-item:hover {
+    background-color: #f8f9fa;
+}
+
+.cart-total {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #28a745;
 }

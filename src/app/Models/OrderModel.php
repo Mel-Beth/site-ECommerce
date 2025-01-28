@@ -9,14 +9,35 @@ class OrderModel extends ModeleParent
     public function getDailyOrders()
     {
         $stmt = $this->pdo->query("
-            SELECT DATE(date_commande) as date, COUNT(*) as commandes, SUM(montant_ttc) as revenus
-            FROM commandes
-            GROUP BY DATE(date_commande)
-            ORDER BY DATE(date_commande) ASC
-        ");
+        SELECT DATE(date_commande) as date, COUNT(*) as commandes, SUM(montant_ttc) as revenus
+        FROM commandes
+        GROUP BY DATE(date_commande)
+        ORDER BY DATE(date_commande) ASC
+    ");
         return $stmt->fetchAll();
     }
 
+    public function getTotalRevenue()
+    {
+        $stmt = $this->pdo->query("SELECT SUM(montant_ttc) as total FROM commandes");
+        $result = $stmt->fetch();
+        return $result['total'];
+    }
+
+    public function getPendingOrdersCount()
+    {
+        $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM commandes WHERE statut_preparation = 0");
+        $result = $stmt->fetch();
+        return $result['total'];
+    }
+
+    public function getOrderItems($orderId)
+    {
+        $sql = "SELECT * FROM contenir WHERE id_commande = :id_commande";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['id_commande' => $orderId]);
+        return $stmt->fetchAll();
+    }
     public function getAllOrders()
     {
         $stmt = $this->pdo->query("
@@ -34,5 +55,20 @@ class OrderModel extends ModeleParent
             UPDATE commandes SET statut_preparation = :status WHERE id_commande = :id
         ");
         $stmt->execute(['status' => $status, 'id' => $orderId]);
+    }
+
+    public function getMonthlyRevenue()
+    {
+        $sql = "SELECT DATE_FORMAT(date_commande, '%Y-%m') as mois, SUM(montant_ttc) as revenus FROM commandes GROUP BY mois ORDER BY mois";
+        $stmt = $this->pdo->query($sql);
+        return $stmt->fetchAll();
+    }
+
+    public function getOrderById($orderId)
+    {
+        $sql = "SELECT * FROM commandes WHERE id_commande = :id_commande";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['id_commande' => $orderId]);
+        return $stmt->fetch();
     }
 }
