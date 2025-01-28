@@ -3,7 +3,6 @@
 namespace Controllers;
 
 use Models\CartModel;
-use Models\ProductModel;
 
 class CartController
 {
@@ -11,23 +10,6 @@ class CartController
     {
         $cartModel = new CartModel();
         $cartItems = $cartModel->getCartItems();
-
-        // Récupérer les détails des produits dans le panier
-        $productModel = new ProductModel();
-        $products = [];
-        foreach ($cartItems as $productId => $quantity) {
-            $product = $productModel->getProductById($productId);
-            if ($product && $product['quantite_stock'] > 0) {
-                $products[] = [
-                    'id_article' => $product['id_article'],
-                    'lib_article' => $product['lib_article'],
-                    'prix' => $product['prix'],
-                    'quantity' => $quantity,
-                ];
-            }
-        }
-
-        // Passer les données à la vue
         include('src/app/Views/public/cart.php');
     }
 
@@ -38,22 +20,6 @@ class CartController
             $quantity = $_POST['quantity'] ?? 1;
 
             if ($productId) {
-                $productModel = new ProductModel();
-                $product = $productModel->getProductById($productId);
-
-                if (!$product) {
-                    $_SESSION['cart_error'] = "Produit non trouvé.";
-                    header('Location: product?id=' . $productId);
-                    exit();
-                }
-
-                // Vérification du stock
-                if ($quantity > $product['quantite_stock']) {
-                    $_SESSION['cart_error'] = "La quantité demandée dépasse le stock disponible.";
-                    header('Location: product?id=' . $productId);
-                    exit();
-                }
-
                 $cartModel = new CartModel();
                 $cartModel->addToCart($productId, $quantity);
 
@@ -91,7 +57,7 @@ class CartController
 
             if ($productId) {
                 $cartModel = new CartModel();
-                $cartModel->addToCart($productId, $quantity);
+                $cartModel->updateCartQuantity($productId, $quantity);
 
                 echo json_encode(['success' => true]);
                 exit();
@@ -102,3 +68,4 @@ class CartController
         exit();
     }
 }
+?>

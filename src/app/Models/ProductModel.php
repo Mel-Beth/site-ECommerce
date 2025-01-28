@@ -13,62 +13,54 @@ class ProductModel extends ModeleParent
         return $stmt->fetch();
     }
 
-    public function getAllProducts($limit = null, $offset = null, $id_categorie = null)
+    public function getAllProducts($limit = null, $offset = null, $id_categorie = null, $id_sous_categorie = null)
     {
-        $sql = "
-        SELECT a.*, i.url_image
-        FROM articles a
-        LEFT JOIN images i ON a.id_article = i.id_article
-    ";
+        $sql = "SELECT * FROM articles WHERE 1";
+        $params = [];
         if ($id_categorie !== null) {
-            $sql .= " WHERE a.id_categorie = :id_categorie";
+            $sql .= " AND id_categorie = :id_categorie";
+            $params['id_categorie'] = $id_categorie;
         }
-        if ($limit !== null && $offset !== null) {
-            $sql .= " LIMIT :limit OFFSET :offset";
+        if ($id_sous_categorie !== null) {
+            $sql .= " AND id_sous_categorie = :id_sous_categorie";
+            $params['id_sous_categorie'] = $id_sous_categorie;
+        }
+        if ($limit !== null) {
+            $sql .= " LIMIT :limit";
+            $params['limit'] = $limit;
+        }
+        if ($offset !== null) {
+            $sql .= " OFFSET :offset";
+            $params['offset'] = $offset;
         }
         $stmt = $this->pdo->prepare($sql);
-        if ($id_categorie !== null) {
-            $stmt->bindValue(':id_categorie', $id_categorie, \PDO::PARAM_INT);
-        }
-        if ($limit !== null && $offset !== null) {
-            $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
-            $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue(":$key", $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
         }
         $stmt->execute();
         return $stmt->fetchAll();
     }
 
-    public function getTotalProducts($id_categorie = null)
-    {
-        $sql = "SELECT COUNT(*) as total FROM articles";
-        if ($id_categorie !== null) {
-            $sql .= " WHERE id_categorie = :id_categorie";
-        }
-        $stmt = $this->pdo->prepare($sql);
-        if ($id_categorie !== null) {
-            $stmt->bindValue(':id_categorie', $id_categorie, \PDO::PARAM_INT);
-        }
-        $stmt->execute();
-        $result = $stmt->fetch();
-        return $result['total'];
-    }
-
     public function getCarouselImages()
     {
-        $sql = "SELECT url_image, alt FROM images LIMIT 3"; // Limite à 3 images pour le carrousel
-        return $this->query($sql)->fetchAll();
+        $sql = "SELECT i.url_image AS url_image, a.lib_article 
+                FROM images i 
+                JOIN articles a ON i.id_article = a.id_article 
+                LIMIT 5";
+        $stmt = $this->pdo->query($sql);
+        return $stmt->fetchAll();
     }
 
     public function getCategoriesWithSubcategories()
     {
         $sql = "
-        SELECT c.id_categorie, c.lib_categorie, sc.id_sous_categorie, sc.lib_sous_categorie, sc.description
+        SELECT c.id_categorie, c.lib_categorie, sc.id_sous_categorie, sc.lib_sous_categorie
         FROM categories c
         LEFT JOIN sous_categories sc ON c.id_categorie = sc.id_categorie
-    ";
-        $results = $this->query($sql)->fetchAll();
+        ";
+        $stmt = $this->pdo->query($sql);
+        $results = $stmt->fetchAll();
 
-        // Organiser les résultats en un tableau structuré
         $categories = [];
         foreach ($results as $row) {
             $id_categorie = $row['id_categorie'];
@@ -78,41 +70,15 @@ class ProductModel extends ModeleParent
                     'sous_categories' => [],
                 ];
             }
-            if ($row['id_sous_categorie']) {
+            if (!empty($row['id_sous_categorie'])) {
                 $categories[$id_categorie]['sous_categories'][] = [
+                    'id_sous_categorie' => $row['id_sous_categorie'],
                     'lib_sous_categorie' => $row['lib_sous_categorie'],
-                    'image' => 'assets/images/' . strtolower(str_replace(' ', '_', $row['lib_sous_categorie'])) . '.webp', // Exemple de chemin d'image
                 ];
             }
         }
 
-        return array_values($categories);
-    }
-
-    public function getProductImages($productId)
-    {
-        $sql = "SELECT * FROM images WHERE id_article = :id_article";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['id_article' => $productId]);
-        return $stmt->fetchAll();
-    }
-
-    public function getOrdersByCategory()
-    {
-        $stmt = $this->pdo->query("
-            SELECT c.lib_categorie, COUNT(co.id_commande) as commandes, SUM(a.prix * co.quantite) as revenus
-            FROM contenir co
-            JOIN articles a ON co.id_article = a.id_article
-            JOIN categories c ON a.id_categorie = c.id_categorie
-            GROUP BY c.lib_categorie
-            ORDER BY commandes DESC
-        ");
-        return $stmt->fetchAll();
-    }
-
-    public function getProductsByCategory($id_categorie)
-    {
-        $sql = "SELECT * FROM articles WHERE id_categorie = :id_categorie";
-        return $this->query($sql, ['id_categorie' => $id_categorie])->fetchAll();
+        return $categories;
     }
 }
+?>

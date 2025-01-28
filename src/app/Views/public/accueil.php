@@ -9,7 +9,10 @@
             <?php if (!empty($carouselImages)): ?>
                 <?php foreach ($carouselImages as $image): ?>
                     <div class="flex-none w-full h-56">
-                        <img src="<?= htmlspecialchars($image['url_image']) ?>" alt="<?= htmlspecialchars($image['alt']) ?>" class="w-full h-full object-cover">
+                        <img src="<?= htmlspecialchars($image['url_image'] ?? 'assets/images/placeholder.jpg') ?>"
+                            alt="<?= htmlspecialchars($image['lib_article'] ?? 'Image indisponible') ?>"
+                            class="w-full h-full object-cover">
+
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
@@ -31,16 +34,23 @@
         <?php if (!empty($categories)): ?>
             <?php foreach ($categories as $categorie): ?>
                 <div class="bg-white shadow-lg rounded-lg p-4 mb-2">
-                    <h3 class="text-xl font-bold mb-4"><?= htmlspecialchars($categorie['lib_categorie']) ?></h3>
+                    <h3 class="text-xl font-bold mb-4"><?= htmlspecialchars($categorie['lib_categorie'] ?? 'Nom catégorie') ?></h3>
                     <div class="grid grid-cols-2 gap-2">
-                        <?php foreach ($categorie['sous_categories'] as $sous_categorie): ?>
-                            <div class="flex flex-col items-center">
-                                <img src="<?= htmlspecialchars($sous_categorie['image']) ?>" alt="<?= htmlspecialchars($sous_categorie['lib_sous_categorie']) ?>" class="w-20 h-20 object-cover rounded">
-                                <p class="text-sm mt-2"><?= htmlspecialchars($sous_categorie['lib_sous_categorie']) ?></p>
-                            </div>
-                        <?php endforeach; ?>
+                        <?php if (!empty($categorie['sous_categories'])): ?>
+                            <?php foreach ($categorie['sous_categories'] as $sous_categorie): ?>
+                                <div class="flex flex-col items-center">
+                                    <img src="<?= htmlspecialchars($sous_categorie['image'] ?? 'placeholder.jpg') ?>"
+                                        alt="<?= htmlspecialchars($sous_categorie['lib_sous_categorie'] ?? 'Nom sous-catégorie') ?>"
+                                        class="w-20 h-20 object-cover rounded">
+                                    <p class="text-sm mt-2"><?= htmlspecialchars($sous_categorie['lib_sous_categorie'] ?? 'Nom non disponible') ?></p>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p>Aucune sous-catégorie disponible.</p>
+                        <?php endif; ?>
                     </div>
-                    <a href="category.php?cat=<?= htmlspecialchars($categorie['id_categorie']) ?>" class="mt-4 block text-center bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
+                    <a href="category.php?cat=<?= htmlspecialchars($categorie['id_categorie'] ?? 0) ?>"
+                        class="mt-4 block text-center bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
                         Voir plus
                     </a>
                 </div>
@@ -57,7 +67,7 @@
 </main>
 
 <script>
-    const articles = <?= json_encode($articles) ?>; // Charger les articles depuis PHP
+    const articles = <?= json_encode($articles ?? []) ?>; // Charger les articles depuis PHP
     const itemsPerPage = 10;
     let currentPage = 1;
 
@@ -72,10 +82,13 @@
         paginatedArticles.forEach(article => {
             const articleHTML = `
                 <div class="bg-white shadow-lg rounded-lg p-4">
-                    <img src="${article.url_image}" alt="${article.lib_article}" class="w-full h-48 object-cover rounded-md mb-4">
-                    <h3 class="text-lg font-bold">${article.lib_article}</h3>
-                    <p class="text-gray-700">${article.prix.toFixed(2)} €</p>
-                    <a href="product?id=${article.id_article}" class="mt-4 inline-block bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
+                    <img src="${article.url_image ?? 'placeholder.jpg'}" 
+                         alt="${article.lib_article ?? 'Article non disponible'}" 
+                         class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-lg font-bold">${article.lib_article ?? 'Nom article'}</h3>
+                    <p class="text-gray-700">${(article.prix ?? 0).toFixed(2)} €</p>
+                    <a href="product?id=${article.id_article ?? 0}" 
+                       class="mt-4 inline-block bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
                         Voir les détails
                     </a>
                 </div>

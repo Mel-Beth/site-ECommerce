@@ -12,29 +12,9 @@ class UserController
             header('Location: login');
             exit();
         }
-
         $userModel = new UserModel();
-        $user_id = $_SESSION['user']['id_membre'];
-
-        try {
-            $user = $userModel->getUserById($user_id);
-
-            if (!$user) {
-                header('Location: logout');
-                exit();
-            }
-
-            // Récupérer les commandes de l'utilisateur
-            $orders = $userModel->getUserOrders($user_id);
-
-            // Récupérer les adresses de l'utilisateur
-            $addresses = $userModel->getUserAddresses($user_id);
-
-            include('src/app/Views/public/user.php');
-        } catch (\PDOException $e) {
-            $error = "Erreur lors de la récupération des informations : " . $e->getMessage();
-            include('src/app/Views/404.php');
-        }
+        $user = $userModel->getUserById($_SESSION['user']['id_membre']);
+        include('src/app/Views/public/user.php');
     }
 
     public function updateRole($userId, $role)
@@ -45,3 +25,4 @@ class UserController
         exit();
     }
 }
+?>
