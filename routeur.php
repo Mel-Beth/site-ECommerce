@@ -78,7 +78,7 @@ if (empty($route[0])) {
 
                 // Routes pour l'administration
             case 'admin':
-                if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+                if (!isset($_SESSION['user']) || $_SESSION['user']['id_role'] != 1) {
                     header('Location: login');
                     exit();
                 }

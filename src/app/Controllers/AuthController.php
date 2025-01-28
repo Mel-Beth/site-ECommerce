@@ -32,7 +32,13 @@ class AuthController
                     $user = $userModel->authenticate($email, $password);
                     if ($user) {
                         $_SESSION['user'] = $user;
-                        header('Location: accueil');
+
+                        // Redirection en fonction du rôle de l'utilisateur
+                        if ($user['id_role'] == 1) {
+                            header('Location: admin/dashboard');
+                        } else {
+                            header('Location: accueil');
+                        }
                         exit();
                     } else {
                         $error = "Email ou mot de passe incorrect.";
@@ -67,4 +73,3 @@ class AuthController
         }
     }
 }
-?>
