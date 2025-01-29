@@ -131,4 +131,28 @@ class ProductModel extends ModeleParent
         $stmt->execute();
         return $stmt->fetchAll();
     }
+
+    public function addProduct($data)
+    {
+        // Préparer la requête d'insertion
+        $stmt = $this->pdo->prepare("
+            INSERT INTO articles (lib_article, description, prix, quantite_stock, id_categorie, id_sous_categorie)
+            VALUES (:lib_article, :description, :prix, :quantite_stock, :id_categorie, :id_sous_categorie)
+        ");
+        $stmt->execute([
+            'lib_article' => $data['lib_article'],
+            'description' => $data['description'],
+            'prix' => $data['prix'],
+            'quantite_stock' => $data['quantite_stock'],
+            'id_categorie' => $data['id_categorie'],
+            'id_sous_categorie' => $data['id_sous_categorie']
+        ]);
+    }
+
+    public function deleteProduct($productId)
+    {
+        // Préparer la requête de suppression
+        $stmt = $this->pdo->prepare("DELETE FROM articles WHERE id_article = :id_article");
+        $stmt->execute(['id_article' => $productId]);
+    }
 }

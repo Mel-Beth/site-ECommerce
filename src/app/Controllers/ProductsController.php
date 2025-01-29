@@ -19,7 +19,6 @@ class ProductsController
         include('src/app/Views/admin/productsAdmin.php');
     }
 
-
     public function show($productId)
     {
         $productModel = new ProductModel();
@@ -58,6 +57,13 @@ class ProductsController
     {
         $productModel = new ProductModel();
         $product = $productModel->getProductById($productId);
+        if (!$product) {
+            throw new \Exception("Produit non trouvé");
+        }
+
+        // Récupérer les catégories
+        $categories = $productModel->getCategoriesWithSubcategories();
+
         include('src/app/Views/admin/edit_product.php');
     }
 
@@ -67,5 +73,39 @@ class ProductsController
         $productModel->deleteProduct($productId);
         header('Location: admin/productsAdmin');
         exit();
+    }
+
+    public function add()
+    {
+        $productModel = new ProductModel();
+
+        // Récupérer les catégories pour l'ajout
+        $categories = $productModel->getCategoriesWithSubcategories();
+
+        // Inclure le formulaire d'ajout
+        include('src/app/Views/admin/add_product.php');
+    }
+
+    public function save()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $productModel = new ProductModel();
+            
+            // Récupérer les données du formulaire
+            $data = [
+                'lib_article' => $_POST['lib_article'],
+                'description' => $_POST['description'],
+                'prix' => $_POST['prix'],
+                'quantite_stock' => $_POST['quantite_stock'],
+                'id_categorie' => $_POST['id_categorie'],
+                'id_sous_categorie' => $_POST['id_sous_categorie'],
+            ];
+
+            $productModel->addProduct($data);
+
+            // Rediriger vers la gestion des produits
+            header('Location: admin/productsAdmin');
+            exit();
+        }
     }
 }

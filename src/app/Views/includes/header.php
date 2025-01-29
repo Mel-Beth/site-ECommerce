@@ -34,7 +34,14 @@ $pdo = $modeleParent->getPdo();
                     <span>Bonjour, <?= htmlspecialchars($_SESSION['user']['pseudo_membre'] ?? 'Utilisateur') ?> !</span>
                 </a>
             </div>
-            <a href="logout" class="text-yellow-500 hover:underline">Déconnexion</a>
+
+            <!-- Déconnexion pour Admin -->
+            <?php if ($_SESSION['user']['id_role'] === 1): ?>
+                <a href="../logout" class="text-yellow-500 hover:underline">Déconnexion</a>
+            <?php else: ?>
+                <a href="logout" class="text-yellow-500 hover:underline">Déconnexion</a>
+            <?php endif; ?>
+
         <?php else: ?>
             <!-- Connexion/Inscription -->
             <div class="relative group">

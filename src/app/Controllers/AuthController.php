@@ -35,7 +35,7 @@ class AuthController
 
                         // Redirection en fonction du rôle de l'utilisateur
                         if ($user['id_role'] == 1) {
-                            header('Location: dashboard');
+                            header('Location: admin/dashboard');
                         } else {
                             header('Location: accueil');
                         }

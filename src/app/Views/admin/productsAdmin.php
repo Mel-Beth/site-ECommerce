@@ -24,6 +24,11 @@
         <div class="container mx-auto p-4">
             <h1 class="text-2xl font-bold mb-4">Gestion des Produits</h1>
 
+            <!-- Formulaire d'ajout de produit -->
+            <div class="mb-6">
+                <a href="productsAdmin/add" class="bg-green-500 text-white px-4 py-2 rounded">Ajouter un Produit</a>
+            </div>
+
             <?php if (!empty($products)): ?>
                 <table class="w-full bg-white shadow-lg rounded-lg">
                     <thead>
@@ -45,7 +50,8 @@
                                 <td class="p-2"><?= htmlspecialchars($product['taux_promotion'] ?? 0) ?> %</td>
                                 <td class="p-2"><?= htmlspecialchars($product['lib_categorie'] ?? 'Non spécifiée') ?></td>
                                 <td class="p-2">
-                                    <a href="admin/productsAdmin/edit/<?= $product['id_article'] ?>" class="bg-blue-500 text-white px-4 py-2 rounded">Éditer</a>
+                                    <a href="productsAdmin/edit/<?= $product['id_article'] ?>" class="bg-blue-500 text-white px-4 py-2 rounded">Éditer</a>
+                                    <a href="productsAdmin/delete/<?= $product['id_article'] ?>" class="bg-red-500 text-white px-4 py-2 rounded" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">Supprimer</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -55,10 +61,9 @@
                 <p class="text-gray-500">Aucun produit à afficher.</p>
             <?php endif; ?>
 
-
-
         </div>
     </main>
+
 </body>
 
 </html>

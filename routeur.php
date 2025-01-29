@@ -93,34 +93,52 @@ if (empty($route[0])) {
                 }
 
                 // Récupère la sous-route admin (comme orders, products, etc.)
-                $adminRoute = $route[1] ?? 'dashboard';
+                $adminRoute = $route[1] ?? 'dashboard'; // Par défaut, redirige vers 'dashboard'
 
                 switch ($adminRoute) {
                     case 'dashboard':
                         $controller = new Controllers\DashboardController();
-                        $controller->index();
+                        $controller->index();  // Assurez-vous que l'index du DashboardController est bien appelé
                         break;
 
                     case 'orders':
                         $controller = new Controllers\OrderController();
                         if (isset($route[2]) && $route[2] == 'generateInvoice') {
-                            // Si la sous-route est 'generateInvoice', on génère la facture
                             if (isset($route[3]) && ctype_digit($route[3])) {
                                 $controller->generateInvoice((int)$route[3]);  // $route[3] contiendra l'ID de la commande
                             } else {
-                                // Si l'ID de commande n'est pas valide
                                 include('src/app/Views/404.php');
                                 exit();
                             }
                         } else {
-                            // Affichage de la liste des commandes
                             $controller->index();
                         }
                         break;
 
+                        // Ajoutez d'autres cases comme 'products', 'users', etc., selon vos besoins
                     case 'products':
+                        // Pour la gestion des produits
                         $controller = new Controllers\ProductsController();
-                        $controller->index();
+
+                        // Route pour afficher la liste des produits
+                        if (!isset($route[2])) {
+                            $controller->index();
+                        }
+
+                        // Route pour ajouter un produit
+                        elseif ($route[2] === 'add') {
+                            $controller->add();
+                        }
+
+                        // Route pour éditer un produit
+                        elseif ($route[2] === 'edit' && isset($route[3]) && ctype_digit($route[3])) {
+                            $controller->edit((int)$route[3]);
+                        }
+
+                        // Route pour supprimer un produit
+                        elseif ($route[2] === 'delete' && isset($route[3]) && ctype_digit($route[3])) {
+                            $controller->delete((int)$route[3]);
+                        }
                         break;
 
                     case 'users':
@@ -133,6 +151,7 @@ if (empty($route[0])) {
                         exit();
                 }
                 break;
+
 
             default:
                 include('src/app/Views/404.php');
