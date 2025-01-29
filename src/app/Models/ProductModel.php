@@ -72,29 +72,35 @@ class ProductModel extends ModeleParent
         SELECT c.id_categorie, c.lib_categorie, sc.id_sous_categorie, sc.lib_sous_categorie
         FROM categories c
         LEFT JOIN sous_categories sc ON c.id_categorie = sc.id_categorie
-        ";
+    ";
         $stmt = $this->pdo->query($sql);
         $results = $stmt->fetchAll();
 
         $categories = [];
+
         foreach ($results as $row) {
             $id_categorie = $row['id_categorie'];
+
+            // Initialiser la catégorie si elle n'existe pas déjà
             if (!isset($categories[$id_categorie])) {
                 $categories[$id_categorie] = [
                     'lib_categorie' => $row['lib_categorie'],
-                    'sous_categories' => [],
+                    'sous_categories' => []
                 ];
             }
+
+            // Ajouter la sous-catégorie si elle existe
             if (!empty($row['id_sous_categorie'])) {
                 $categories[$id_categorie]['sous_categories'][] = [
                     'id_sous_categorie' => $row['id_sous_categorie'],
-                    'lib_sous_categorie' => $row['lib_sous_categorie'],
+                    'lib_sous_categorie' => $row['lib_sous_categorie']
                 ];
             }
         }
 
         return $categories;
     }
+
 
     public function getAllProductsForAdmin($limit = null, $offset = null, $id_categorie = null, $id_sous_categorie = null)
     {

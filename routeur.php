@@ -98,14 +98,14 @@ if (empty($route[0])) {
                 switch ($adminRoute) {
                     case 'dashboard':
                         $controller = new Controllers\DashboardController();
-                        $controller->index();  // Assurez-vous que l'index du DashboardController est bien appelé
+                        $controller->index();
                         break;
 
                     case 'orders':
                         $controller = new Controllers\OrderController();
                         if (isset($route[2]) && $route[2] == 'generateInvoice') {
                             if (isset($route[3]) && ctype_digit($route[3])) {
-                                $controller->generateInvoice((int)$route[3]);  // $route[3] contiendra l'ID de la commande
+                                $controller->generateInvoice((int)$route[3]);
                             } else {
                                 include('src/app/Views/404.php');
                                 exit();
@@ -115,7 +115,6 @@ if (empty($route[0])) {
                         }
                         break;
 
-                        // Ajoutez d'autres cases comme 'products', 'users', etc., selon vos besoins
                     case 'products':
                         // Pour la gestion des produits
                         $controller = new Controllers\ProductsController();
@@ -151,7 +150,6 @@ if (empty($route[0])) {
                         exit();
                 }
                 break;
-
 
             default:
                 include('src/app/Views/404.php');

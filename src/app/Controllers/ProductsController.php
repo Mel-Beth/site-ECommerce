@@ -82,15 +82,16 @@ class ProductsController
         // Récupérer les catégories pour l'ajout
         $categories = $productModel->getCategoriesWithSubcategories();
 
-        // Inclure le formulaire d'ajout
+        // Passer les catégories à la vue
         include('src/app/Views/admin/add_product.php');
     }
+
 
     public function save()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $productModel = new ProductModel();
-            
+
             // Récupérer les données du formulaire
             $data = [
                 'lib_article' => $_POST['lib_article'],

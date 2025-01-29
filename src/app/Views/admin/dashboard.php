@@ -1,19 +1,4 @@
-<!DOCTYPE html>
-<html lang="fr">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard Admin</title>
-
-    <!-- Tailwind CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-
+<?php include('src/app/Views/includes/head.php'); ?>
 <?php include('src/app/Views/includes/header.php'); ?>
 <?php include('src/app/Views/includes/sidebar.php'); ?>
 
@@ -204,6 +189,5 @@
             alert("Aucune donnée disponible pour le graphique des revenus mensuels.");
         <?php endif; ?>
     </script>
-</body>
 
-</html>
+<?php include('src/app/Views/includes/footer.php'); ?>
