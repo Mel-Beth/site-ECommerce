@@ -94,7 +94,7 @@ class OrderModel extends ModeleParent
     public function getOrderById($orderId)
     {
         $stmt = $this->pdo->prepare("
-        SELECT c.id_commande, c.date_commande, c.statut_preparation, c.montant_ht, c.montant_ttc, c.adresse_facturation, c.adresse_livraison, m.pseudo_membre
+        SELECT c.id_commande, c.date_commande, c.statut_preparation, c.montant_ht, c.montant_ttc, c.adresse_facturation, c.adresse_livraison, m.pseudo_membre, m.email
         FROM commandes c
         JOIN membres m ON c.id_membre = m.id_membre
         WHERE c.id_commande = :id_commande
