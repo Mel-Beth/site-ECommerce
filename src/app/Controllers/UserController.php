@@ -38,4 +38,18 @@ class UserController
         $orders = $userModel->getUserOrders($_SESSION['user']['id_membre']);
         include('src/app/Views/public/user.php');
     }
+
+    public function listUsers()
+    {
+        if (!isset($_SESSION['user']) || $_SESSION['user']['id_role'] != 1) {
+            header('Location: login');
+            exit();
+        }
+
+        $userModel = new UserModel();
+        $users = $userModel->getAllUsers();  // Récupère tous les utilisateurs
+
+        // Inclure la vue pour afficher la liste des utilisateurs
+        include('src/app/Views/admin/usersAdmin.php');
+    }
 }

@@ -10,6 +10,7 @@ $route = array_map('htmlspecialchars', $route);
 
 // Routage en fonction de la première case du tableau
 if (empty($route[0])) {
+    // Route par défaut - Accueil
     $controller = new Controllers\HomeController();
     $controller->index();
 } else {
@@ -20,25 +21,32 @@ if (empty($route[0])) {
                 $controller->index();
                 break;
 
+                // Route pour afficher un produit
             case 'product':
-                $controller = new Controllers\ProductController();
                 if (isset($_GET['id']) && ctype_digit($_GET['id'])) {
+                    $controller = new Controllers\ProductsController();
                     $controller->show((int)$_GET['id']);
                 } else {
                     throw new Exception("ID de produit invalide.");
                 }
                 break;
 
+                // Route pour afficher tous les produits, publique ou admin
             case 'products':
-                $controller = new Controllers\ProductController();
-                $controller->index();
+                $controller = new Controllers\ProductsController();
+                if (isset($route[1]) && $route[1] === 'admin') {
+                    // Route admin
+                    $controller->index();
+                } else {
+                    // Route publique
+                    $controller->publicArticles();
+                }
                 break;
 
             case 'articles':
-                $controller = new Controllers\ProductController();
+                $controller = new Controllers\ProductsController();
                 $controller->publicArticles();
                 break;
-
 
             case 'cart':
                 $controller = new Controllers\CartController();
@@ -67,8 +75,9 @@ if (empty($route[0])) {
                 break;
 
             case 'logout':
-                session_destroy();
-                header('Location: login');
+                session_destroy(); // Détruit la session
+                header('Location: login'); // Redirige vers la page de connexion
+                exit();
                 break;
 
             case 'user':
@@ -76,13 +85,14 @@ if (empty($route[0])) {
                 $controller->profile();
                 break;
 
-                // Routes pour l'administration
+                // Ajustez cette partie pour que la route admin soit correctement traitée
             case 'admin':
                 if (!isset($_SESSION['user']) || $_SESSION['user']['id_role'] != 1) {
                     header('Location: login');
                     exit();
                 }
 
+                // Récupère la sous-route admin (comme orders, products, etc.)
                 $adminRoute = $route[1] ?? 'dashboard';
 
                 switch ($adminRoute) {
@@ -93,25 +103,29 @@ if (empty($route[0])) {
 
                     case 'orders':
                         $controller = new Controllers\OrderController();
-                        if (isset($route[2]) && $route[2] === 'details' && isset($route[3])) {
-                            $controller->show((int)$route[3]);
+                        if (isset($route[2]) && $route[2] == 'generateInvoice') {
+                            // Si la sous-route est 'generateInvoice', on génère la facture
+                            if (isset($route[3]) && ctype_digit($route[3])) {
+                                $controller->generateInvoice((int)$route[3]);  // $route[3] contiendra l'ID de la commande
+                            } else {
+                                // Si l'ID de commande n'est pas valide
+                                include('src/app/Views/404.php');
+                                exit();
+                            }
                         } else {
+                            // Affichage de la liste des commandes
                             $controller->index();
                         }
                         break;
 
                     case 'products':
-                        $controller = new Controllers\ProductController();
-                        if (isset($route[2]) && $route[2] === 'edit' && isset($route[3])) {
-                            $controller->edit((int)$route[3]);
-                        } else {
-                            $controller->index();
-                        }
+                        $controller = new Controllers\ProductsController();
+                        $controller->index();
                         break;
 
                     case 'users':
                         $controller = new Controllers\UserController();
-                        $controller->profile();
+                        $controller->listUsers();
                         break;
 
                     default:
@@ -125,9 +139,8 @@ if (empty($route[0])) {
                 exit();
         }
     } catch (Exception $e) {
-        // Gestion des erreurs
         error_log($e->getMessage());
-        include('src/app/Views/404.php'); // Vue pour les erreurs internes
+        include('src/app/Views/404.php');
         exit();
     }
 }

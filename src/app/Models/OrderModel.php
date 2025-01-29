@@ -33,11 +33,11 @@ class OrderModel extends ModeleParent
 
     public function getOrderItems($orderId)
     {
-        $sql = "SELECT * FROM contenir WHERE id_commande = :id_commande";
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->pdo->prepare("SELECT * FROM articles a JOIN contenir c ON a.id_article = c.id_article WHERE c.id_commande = :id_commande");
         $stmt->execute(['id_commande' => $orderId]);
         return $stmt->fetchAll();
     }
+
     public function getAllOrders()
     {
         $stmt = $this->pdo->query("
@@ -66,8 +66,7 @@ class OrderModel extends ModeleParent
 
     public function getOrderById($orderId)
     {
-        $sql = "SELECT * FROM commandes WHERE id_commande = :id_commande";
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->pdo->prepare("SELECT * FROM commandes WHERE id_commande = :id_commande");
         $stmt->execute(['id_commande' => $orderId]);
         return $stmt->fetch();
     }

@@ -4,7 +4,7 @@ namespace Controllers;
 
 use Models\ProductModel;
 
-class ProductController
+class ProductsController
 {
     public function index()
     {
@@ -12,9 +12,13 @@ class ProductController
         $id_categorie = isset($_GET['categorie']) ? (int)$_GET['categorie'] : null;
         $sort = $_GET['sort'] ?? 'date_creation';
         $order = $_GET['order'] ?? 'DESC';
-        $products = $productModel->getAllProducts(null, null, $id_categorie, $sort, $order);
-        include('src/app/Views/admin/products.php');
+
+        // Utilisation de la méthode existante 'getAllProducts'
+        $products = $productModel->getAllProducts(null, null, $id_categorie);
+
+        include('src/app/Views/admin/productsAdmin.php');
     }
+
 
     public function show($productId)
     {
@@ -61,7 +65,7 @@ class ProductController
     {
         $productModel = new ProductModel();
         $productModel->deleteProduct($productId);
-        header('Location: admin/products');
+        header('Location: admin/productsAdmin');
         exit();
     }
 }

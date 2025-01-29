@@ -2,46 +2,114 @@
 <html lang="fr">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau de Bord Admin</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Admin</title>
+
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body class="bg-gray-100">
-    <div class="container mx-auto p-4">
-        <h1 class="text-2xl font-bold mb-4">Tableau de Bord Admin</h1>
-        <p>Bienvenue dans l'interface d'administration.</p>
+    <?php include('src/app/Views/includes/header.php'); ?>
+    <?php include('src/app/Views/includes/sidebar.php'); ?>
 
-        <div class="mt-6 space-y-4">
-            <a href="admin/orders" class="block bg-blue-500 text-white px-4 py-2 rounded text-center">Gérer les Commandes</a>
-            <a href="admin/products" class="block bg-green-500 text-white px-4 py-2 rounded text-center">Gérer les Produits</a>
-            <a href="admin/users" class="block bg-yellow-500 text-white px-4 py-2 rounded text-center">Gérer les Utilisateurs</a>
-            <a href="admin/reviews" class="block bg-purple-500 text-white px-4 py-2 rounded text-center">Gérer les Avis</a>
+<body class="bg-gray-100 h-screen overflow-hidden">
+
+    <!-- Contenu principal -->
+    <main class="ml-60 pt-16 p-6 h-screen overflow-auto">
+        <h2 class="text-2xl font-bold mb-6">Statistiques</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <canvas id="userTrafficChart"></canvas>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <canvas id="ordersChart"></canvas>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <canvas id="categoryChart"></canvas>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <canvas id="revenueChart"></canvas>
+            </div>
         </div>
+    </main>
 
-        <!-- Graphique des revenus mensuels -->
-        <div class="mt-6">
-            <canvas id="revenueChart"></canvas>
-        </div>
 
-        <form method="POST" action="admin/logout" class="mt-6">
-            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded">Déconnexion</button>
-        </form>
-    </div>
-
+    <!-- Scripts pour les graphiques -->
     <script>
-        const ctx = document.getElementById('revenueChart').getContext('2d');
-        const revenueChart = new Chart(ctx, {
+        const userTrafficCtx = document.getElementById('userTrafficChart').getContext('2d');
+        const ordersCtx = document.getElementById('ordersChart').getContext('2d');
+        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+
+        new Chart(userTrafficCtx, {
             type: 'line',
             data: {
-                labels: <?= json_encode(array_column($stats, 'mois')) ?>,
+                labels: <?= json_encode(array_column($userTrafficStats, 'date')) ?>,
                 datasets: [{
-                    label: 'Revenus mensuels',
-                    data: <?= json_encode(array_column($stats, 'revenus')) ?>,
-                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                    borderColor: 'rgba(59, 130, 246, 1)',
+                    label: 'Trafic Utilisateur',
+                    data: <?= json_encode(array_column($userTrafficStats, 'visits')) ?>,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        new Chart(ordersCtx, {
+            type: 'bar',
+            data: {
+                labels: <?= json_encode(array_column($ordersStats, 'date')) ?>,
+                datasets: [{
+                    label: 'Commandes',
+                    data: <?= json_encode(array_column($ordersStats, 'orders')) ?>,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+                labels: <?= json_encode(array_column($categoryStats, 'category')) ?>,
+                datasets: [{
+                    label: 'Catégories',
+                    data: <?= json_encode(array_column($categoryStats, 'count')) ?>,
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+                    hoverOffset: 4
+                }]
+            }
+        });
+
+        new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: <?= json_encode(array_column($revenueStats, 'month')) ?>,
+                datasets: [{
+                    label: 'Revenus Mensuels',
+                    data: <?= json_encode(array_column($revenueStats, 'revenue')) ?>,
+                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                    borderColor: 'rgba(255, 206, 86, 1)',
                     borderWidth: 1
                 }]
             },
@@ -54,6 +122,21 @@
             }
         });
     </script>
-</body>
 
+<footer class="bg-gray-800 text-white py-4 mt-4 ml-0 md:ml-60">
+    <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center">
+            <p>&copy; 2025 Vide Ton Porte-Monnaie - Tous droits réservés</p>
+            <div class="flex space-x-4">
+                <a href="cgv" class="text-yellow-500 hover:underline">CGV</a>
+                <a href="contact" class="text-yellow-500 hover:underline">Contact</a>
+                <a href="faq" class="text-yellow-500 hover:underline">FAQ</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="src/js/cart.js"></script>
+
+</body>
 </html>

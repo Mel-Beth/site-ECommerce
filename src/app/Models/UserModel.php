@@ -89,4 +89,15 @@ class UserModel extends ModeleParent
             'id_membre' => $userId
         ]);
     }
+
+    public function getAllUsers()
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT m.*, r.lib_role
+            FROM membres m
+            JOIN roles r ON m.id_role = r.id_role
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }

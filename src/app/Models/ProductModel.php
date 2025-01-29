@@ -38,8 +38,23 @@ class ProductModel extends ModeleParent
             $stmt->bindValue(":$key", $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
         }
         $stmt->execute();
-        return $stmt->fetchAll();
+        $products = $stmt->fetchAll();
+
+        // Ajoute une vérification de la catégorie avant de retourner le produit
+        foreach ($products as &$product) {
+            if (!$product['id_categorie']) {
+                $product['lib_categorie'] = 'Aucune catégorie';
+            } else {
+                $categoryStmt = $this->pdo->prepare("SELECT lib_categorie FROM categories WHERE id_categorie = :id_categorie");
+                $categoryStmt->execute(['id_categorie' => $product['id_categorie']]);
+                $category = $categoryStmt->fetch();
+                $product['lib_categorie'] = $category['lib_categorie'] ?? 'Aucune catégorie';
+            }
+        }
+
+        return $products;
     }
+
 
     public function getCarouselImages()
     {
@@ -80,5 +95,40 @@ class ProductModel extends ModeleParent
 
         return $categories;
     }
+
+    public function getAllProductsForAdmin($limit = null, $offset = null, $id_categorie = null, $id_sous_categorie = null)
+    {
+        // Requête spécifique à l'admin pour récupérer les produits avec les catégories
+        $sql = "
+        SELECT a.id_article, a.lib_article, a.prix, a.taux_promotion, c.lib_categorie
+        FROM articles a
+        LEFT JOIN categories c ON a.id_categorie = c.id_categorie
+        WHERE 1
+    ";
+        $params = [];
+
+        if ($id_categorie !== null) {
+            $sql .= " AND a.id_categorie = :id_categorie";
+            $params['id_categorie'] = $id_categorie;
+        }
+        if ($id_sous_categorie !== null) {
+            $sql .= " AND a.id_sous_categorie = :id_sous_categorie";
+            $params['id_sous_categorie'] = $id_sous_categorie;
+        }
+        if ($limit !== null) {
+            $sql .= " LIMIT :limit";
+            $params['limit'] = $limit;
+        }
+        if ($offset !== null) {
+            $sql .= " OFFSET :offset";
+            $params['offset'] = $offset;
+        }
+
+        $stmt = $this->pdo->prepare($sql);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue(":$key", $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }
-?>
