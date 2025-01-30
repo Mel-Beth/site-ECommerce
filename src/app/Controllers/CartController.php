@@ -23,6 +23,13 @@ class CartController
                 $cartModel = new CartModel();
                 $cartModel->addToCart($productId, $quantity);
 
+                if (isset($_SESSION['cart_error'])) {
+                    $_SESSION['cart_message'] = $_SESSION['cart_error'];
+                    unset($_SESSION['cart_error']);
+                } else {
+                    $_SESSION['cart_message'] = "Article ajouté au panier ✅";
+                }
+
                 header('Location: cart');
                 exit();
             }

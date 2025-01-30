@@ -13,7 +13,23 @@ class CartModel extends ModeleParent
 
     public function addToCart($productId, $quantity)
     {
-        $_SESSION['cart'][$productId] = ($_SESSION['cart'][$productId] ?? 0) + $quantity;
+        $pdo = $this->getPdo();
+
+        // Récupérer les infos du produit
+        $stmt = $pdo->prepare("SELECT * FROM articles WHERE id_article = :id");
+        $stmt->execute(['id' => $productId]);
+        $product = $stmt->fetch();
+
+        if ($product && $product['quantite_stock'] >= $quantity) {
+            $_SESSION['cart'][$productId] = [
+                'id' => $product['id_article'],
+                'name' => $product['lib_article'],
+                'price' => $product['prix'],
+                'quantity' => ($_SESSION['cart'][$productId]['quantity'] ?? 0) + $quantity
+            ];
+        } else {
+            $_SESSION['cart_error'] = "Stock insuffisant pour " . $product['lib_article'];
+        }
     }
 
     public function removeFromCart($productId)

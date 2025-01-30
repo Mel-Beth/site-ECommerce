@@ -52,10 +52,8 @@ class ProductModel extends ModeleParent
         $stmt->execute();
         $products = $stmt->fetchAll();
 
-
         return $products;
     }
-
 
     public function getCarouselImages()
     {
@@ -139,7 +137,6 @@ class ProductModel extends ModeleParent
         return $products;
     }
 
-
     public function addProduct($data)
     {
         $stmt = $this->pdo->prepare("INSERT INTO articles (lib_article, description, prix, quantite_stock, id_categorie, id_sous_categorie) VALUES (:lib_article, :description, :prix, :quantite_stock, :id_categorie, :id_sous_categorie)");
@@ -195,5 +192,27 @@ class ProductModel extends ModeleParent
         ");
         $stmt->execute(['id_article' => $productId]);
         return $stmt->fetchAll();
+    }
+
+    public function applyDiscount($productId, $discountPercentage)
+    {
+        $pdo = $this->getPdo();
+
+        $stmt = $pdo->prepare("UPDATE articles SET prix = prix - (prix * :discount / 100) WHERE id_article = :id");
+        $stmt->execute([
+            'discount' => $discountPercentage,
+            'id' => $productId
+        ]);
+    }
+
+    public function updateStock($productId, $quantitySold)
+    {
+        $pdo = $this->getPdo();
+
+        $stmt = $pdo->prepare("UPDATE articles SET quantite_stock = quantite_stock - :quantity WHERE id_article = :id");
+        $stmt->execute([
+            'quantity' => $quantitySold,
+            'id' => $productId
+        ]);
     }
 }

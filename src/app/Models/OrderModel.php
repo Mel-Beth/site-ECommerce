@@ -188,4 +188,30 @@ class OrderModel extends ModeleParent
     ");
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    public function addOrder($userId, $cartItems, $total)
+    {
+        $pdo = $this->getPdo();
+
+        // Insérer la commande
+        $stmt = $pdo->prepare("INSERT INTO commandes (id_membre, date_commande, montant_ttc, statut_preparation) VALUES (:userId, NOW(), :total, 'En attente')");
+        $stmt->execute([
+            'userId' => $userId,
+            'total' => $total
+        ]);
+
+        $orderId = $pdo->lastInsertId();
+
+        // Insérer les articles de la commande
+        foreach ($cartItems as $item) {
+            $stmt = $pdo->prepare("INSERT INTO contenir (id_commande, id_article, quantite) VALUES (:orderId, :productId, :quantity)");
+            $stmt->execute([
+                'orderId' => $orderId,
+                'productId' => $item['id'],
+                'quantity' => $item['quantity']
+            ]);
+        }
+
+        return $orderId;
+    }
 }

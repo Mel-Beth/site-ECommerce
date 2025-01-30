@@ -30,7 +30,7 @@ if (empty($route[0])) {
                     $controller->publicArticles();
                 }
                 break;
-            break; // ✅ Correction : éviter de tomber sur 'cart'
+                break; // ✅ Correction : éviter de tomber sur 'cart'
 
             case 'cart':
                 $controller = new Controllers\CartController();
@@ -187,6 +187,19 @@ if (empty($route[0])) {
                         exit();
                 }
                 break;
+
+            case 'payment':
+                (new Controllers\PaymentController())->createSession();
+                break;
+
+            case 'success':
+                (new Controllers\PaymentController())->paymentSuccess();
+                break;
+
+            case 'cancel':
+                (new Controllers\PaymentController())->paymentCancel();
+                break;
+
 
             default:
                 include('src/app/Views/404.php');

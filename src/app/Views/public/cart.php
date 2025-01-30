@@ -79,11 +79,13 @@
                         <input type="text" name="coupon" placeholder="Code promo" class="w-full p-2 border rounded">
                         <button type="submit" class="w-full bg-yellow-500 text-white py-2 rounded-lg mt-2 hover:bg-yellow-600">Appliquer le coupon</button>
                     </form>
-                    <form method="POST" action="cart/validateOrder">
-                        <button type="submit" name="validate_order" class="w-full bg-green-500 text-white py-2 rounded-lg mt-6 hover:bg-green-600">
-                            Valider la commande ✅
-                        </button>
-                    </form>
+                    <?php if (!empty($_SESSION['cart'])): ?>
+                        <form action="/payment" method="POST">
+                            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg mt-6 hover:bg-blue-600">
+                                Payer avec Stripe 💳
+                            </button>
+                        </form>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
