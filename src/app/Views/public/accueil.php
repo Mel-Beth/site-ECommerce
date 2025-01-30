@@ -123,3 +123,5 @@
 </script>
 
 <?php include('src/app/Views/includes/footer.php'); ?>
+
+<script src="cart.js"></script>

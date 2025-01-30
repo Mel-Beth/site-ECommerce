@@ -21,4 +21,7 @@ $pageTitle = isset($admin) && $admin ? "Dashboard Admin" : "Vide Ton Porte-Monna
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Version CDN fonctionnelle -->
+    <script src="cart.js"></script>
+    <script src="cart.js"></script>
+
 </head>
