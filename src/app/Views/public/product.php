@@ -56,14 +56,21 @@
             <div class="mt-6">
                 <h4 class="text-xl font-bold mb-4">Produits similaires</h4>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    <?php foreach ($similarProducts as $similarProduct): ?>
-                        <div class="bg-white shadow-lg rounded-lg p-4">
-                            <img src="<?= htmlspecialchars('assets/images/' . ($similarProduct['image'] ?? 'default.png')) ?>" alt="<?= htmlspecialchars($similarProduct['lib_article']) ?>" class="w-full h-48 object-cover rounded-md mb-4">
-                            <h5 class="text-lg font-bold"><?= htmlspecialchars($similarProduct['lib_article']) ?></h5>
-                            <p class="text-gray-700"><?= number_format($similarProduct['prix'], 2) ?> €</p>
-                            <a href="product?id=<?= $similarProduct['id_article'] ?>" class="mt-4 inline-block bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Voir les détails</a>
-                        </div>
-                    <?php endforeach; ?>
+                    <!-- ✅ Vérification avant la boucle -->
+                    <?php if (!empty($similarProducts) && is_array($similarProducts)) : ?>
+                        <h2>Produits similaires</h2>
+                        <ul>
+                            <?php foreach ($similarProducts as $product) : ?>
+                                <li>
+                                    <a href="/product?id=<?= htmlspecialchars($product['id_article']) ?>">
+                                        <?= htmlspecialchars($product['lib_article']) ?>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else : ?>
+                        <p>Aucun produit similaire trouvé.</p>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

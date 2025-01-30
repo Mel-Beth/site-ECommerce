@@ -8,13 +8,24 @@ class AuthController
 {
     public function index()
     {
+        // Si l'utilisateur est déjà connecté, redirige vers l'accueil
         if (isset($_SESSION['user'])) {
             header('Location: accueil');
             exit();
         }
-        $error = $_SESSION['login_error'] ?? '';
-        unset($_SESSION['login_error']);
-        include('src/app/Views/public/login.php');
+
+        // Gérer les vues en fonction de la route demandée
+        if ($_GET['route'] == 'login') {
+            // Affiche le formulaire de connexion
+            $error = $_SESSION['login_error'] ?? '';
+            unset($_SESSION['login_error']);
+            include('src/app/Views/public/login.php');
+        } elseif ($_GET['route'] == 'register') {
+            // Affiche le formulaire d'inscription
+            $error = $_SESSION['register_error'] ?? '';
+            unset($_SESSION['register_error']);
+            include('src/app/Views/public/register.php');
+        }
     }
 
     public function login()
@@ -63,13 +74,103 @@ class AuthController
             'pseudo_membre' => $_POST['pseudo_membre'] ?? '',
             'email' => $_POST['email'] ?? '',
             'motdepasse' => $_POST['password'] ?? '',
+            'adresse' => $_POST['adresse'] ?? '', // Si l'adresse est vide, on la laisse comme ça
         ];
 
-        if ($userModel->register($data)) {
-            header('Location: login');
-        } else {
-            $error = 'Erreur lors de l’inscription.';
+        // Affiche les données pour débogage
+        // var_dump($data);
+
+        // Vérifie si l'utilisateur existe déjà avec cet email
+        if ($userModel->emailExists($data['email'])) {
+            $_SESSION['register_error'] = "Cet email est déjà utilisé.";
             include('src/app/Views/public/register.php');
+            return;
+        }
+
+        // Inscription de l'utilisateur
+        if ($userModel->register($data)) {
+            // Authentifie l'utilisateur immédiatement après l'inscription
+            $user = $userModel->authenticate($data['email'], $data['motdepasse']);
+
+            // Vérifie si l'utilisateur a été authentifié avec succès
+            // var_dump($user);
+
+            if ($user) {
+                $_SESSION['user'] = $user; // Connexion automatique
+
+                // Redirige vers la page d'accueil après connexion
+                header('Location: accueil');
+                exit();
+            } else {
+                $_SESSION['login_error'] = 'Problème lors de la connexion automatique.';
+                header('Location: login');
+                exit();
+            }
+        } else {
+            $_SESSION['register_error'] = 'Erreur lors de l’inscription.';
+            include('src/app/Views/public/register.php');
+        }
+    }
+
+    public function forgotPassword()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $email = $_POST['email'] ?? '';
+            $userModel = new UserModel();
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $_SESSION['error'] = "Format d'email invalide.";
+                header('Location: forgot-password');
+                exit();
+            }
+
+            $user = $userModel->getUserByEmail($email);
+            if (!$user) {
+                $_SESSION['error'] = "Aucun compte associé à cet email.";
+                header('Location: forgot-password');
+                exit();
+            }
+
+            $token = bin2hex(random_bytes(50));
+            $userModel->storeResetToken($user['id_membre'], $token);
+
+            $resetLink = "http://yourwebsite.com/reset-password?token=" . $token;
+            mail($email, "Réinitialisation du mot de passe", "Cliquez sur ce lien pour réinitialiser votre mot de passe : " . $resetLink);
+
+            $_SESSION['success'] = "Un email de réinitialisation a été envoyé.";
+            header('Location: login');
+            exit();
+        }
+    }
+
+    public function resetPassword()
+    {
+        $userModel = new UserModel();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $token = $_POST['token'] ?? '';
+            $newPassword = $_POST['password'] ?? '';
+
+            if (empty($token) || empty($newPassword)) {
+                $_SESSION['error'] = "Tous les champs sont obligatoires.";
+                header('Location: reset-password?token=' . $token);
+                exit();
+            }
+
+            $user = $userModel->getUserByToken($token);
+            if (!$user) {
+                $_SESSION['error'] = "Token invalide ou expiré.";
+                header('Location: forgot-password');
+                exit();
+            }
+
+            $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+            $userModel->updatePassword($user['id_membre'], $hashedPassword);
+            $userModel->clearResetToken($user['id_membre']);
+
+            $_SESSION['success'] = "Votre mot de passe a été mis à jour.";
+            header('Location: login');
+            exit();
         }
     }
 }

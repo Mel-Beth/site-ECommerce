@@ -21,9 +21,34 @@ class SearchModel extends ModeleParent
                 (!$maxPrice || $item['prix'] <= $maxPrice);
         });
     }
+
     public function searchByTags($tags)
     {
-        $sql = "SELECT a.* FROM articles a JOIN articles_tags at ON a.id_article = at.id_article JOIN tags t ON at.id_tag = t.id_tag WHERE t.lib_tag IN (:tags)";
-        return $this->query($sql, ['tags' => $tags])->fetchAll();
+        $stmt = $this->pdo->prepare("SELECT a.* FROM articles a JOIN articles_tags at ON a.id_article = at.id_article JOIN tags t ON at.id_tag = t.id_tag WHERE t.lib_tag IN (:tags)");
+        $stmt->execute(['tags' => implode(',', $tags)]);
+        return $stmt->fetchAll();
+    }
+
+    public function searchProductsWithFilters($query, $id_categorie = null, $minPrice = null, $maxPrice = null)
+    {
+        $sql = "SELECT * FROM articles WHERE lib_article LIKE :query";
+        $params = ['query' => '%' . $query . '%'];
+        
+        if ($id_categorie !== null) {
+            $sql .= " AND id_categorie = :id_categorie";
+            $params['id_categorie'] = $id_categorie;
+        }
+        if ($minPrice !== null) {
+            $sql .= " AND prix >= :minPrice";
+            $params['minPrice'] = $minPrice;
+        }
+        if ($maxPrice !== null) {
+            $sql .= " AND prix <= :maxPrice";
+            $params['maxPrice'] = $maxPrice;
+        }
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
     }
 }

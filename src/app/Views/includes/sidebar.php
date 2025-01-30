@@ -20,15 +20,24 @@
             <a href="products" class="flex items-center space-x-3 text-white hover:text-yellow-200 p-3 rounded-lg">
                 <i class="fas fa-box"></i> <span>Produits</span>
             </a>
+            <a href="reviews" class="flex items-center space-x-3 text-white hover:text-yellow-200 p-3 rounded-lg">
+                <i class="fas fa-star"></i> <span>Avis Clients</span>
+            </a>
             <a href="users" class="flex items-center space-x-3 text-white hover:text-yellow-200 p-3 rounded-lg">
                 <i class="fas fa-users"></i> <span>Utilisateurs</span>
+            </a>
+            <a href="stats" class="flex items-center space-x-3 text-white hover:text-yellow-200 p-3 rounded-lg">
+                <i class="fas fa-chart-bar"></i> <span>Statistiques</span>
+            </a>
+            <a href="settings" class="flex items-center space-x-3 text-white hover:text-yellow-200 p-3 rounded-lg">
+                <i class="fas fa-cogs"></i> <span>Paramètres</span>
             </a>
         <?php else: ?>
             <!-- Liens pour les utilisateurs ou visiteurs -->
             <a href="accueil" class="flex items-center space-x-3 text-white hover:text-yellow-200 p-3 rounded-lg">
                 <i class="fas fa-home"></i> <span>Accueil</span>
             </a>
-            <a href="articles" class="flex items-center space-x-3 text-white hover:text-yellow-200 p-3 rounded-lg">
+            <a href="products" class="flex items-center space-x-3 text-white hover:text-yellow-200 p-3 rounded-lg">
                 <i class="fas fa-box"></i> <span>Articles</span>
             </a>
             <a href="cart" class="flex items-center space-x-3 text-white hover:text-yellow-200 p-3 rounded-lg">

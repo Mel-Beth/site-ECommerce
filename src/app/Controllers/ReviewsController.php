@@ -4,14 +4,13 @@ namespace Controllers;
 
 use Models\ReviewModel;
 
-class ReviewController
+class ReviewsController
 {
     public function index()
     {
         $reviewModel = new ReviewModel();
         $reviews = $reviewModel->getAllReviews();
 
-        // Récupérer les réponses aux avis
         foreach ($reviews as &$review) {
             $review['reponses'] = $reviewModel->getReviewResponses($review['id_avis']);
         }
@@ -23,7 +22,7 @@ class ReviewController
     {
         $reviewModel = new ReviewModel();
         $reviewModel->deleteReview($reviewId);
-        header('Location: admin/reviews');
+        header('Location: reviews');
         exit();
     }
 
@@ -31,7 +30,7 @@ class ReviewController
     {
         $reviewModel = new ReviewModel();
         $reviewModel->approveReview($reviewId);
-        header('Location: admin/reviews');
+        header('Location: reviews');
         exit();
     }
 }

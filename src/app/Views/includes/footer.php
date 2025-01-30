@@ -3,15 +3,17 @@
         <div class="flex justify-between items-center">
             <p>&copy; 2025 Vide Ton Porte-Monnaie - Tous droits réservés</p>
             <div class="flex space-x-4">
-                <a href="cgv" class="text-yellow-500 hover:underline">CGV</a>
-                <a href="contact" class="text-yellow-500 hover:underline">Contact</a>
-                <a href="faq" class="text-yellow-500 hover:underline">FAQ</a>
+                <a href="/cgv" class="text-yellow-500 hover:underline">CGV</a>
+                <a href="/contact" class="text-yellow-500 hover:underline">Contact</a>
+                <a href="/faq" class="text-yellow-500 hover:underline">FAQ</a>
             </div>
         </div>
     </div>
 </footer>
 
-<script src="src/js/cart.js"></script>
+<!-- Scripts JS -->
+<script src="/projets/back/siteECommerce/src/js/cart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </body>
 </html>

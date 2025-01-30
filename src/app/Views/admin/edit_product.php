@@ -2,64 +2,116 @@
 <?php include('src/app/Views/includes/header.php'); ?>
 <?php include('src/app/Views/includes/sidebar.php'); ?>
 
-<body class="bg-gray-100 h-screen overflow-hidden">
+<main class="ml-60 pt-16 p-6 h-screen overflow-auto">
+    <h2 class="text-2xl font-bold mb-6">✏️ Modifier un Produit</h2>
 
-    <!-- Contenu principal -->
-    <main class="ml-60 pt-16 p-6 h-screen overflow-auto">
-        <div class="container mx-auto p-6">
-            <h2 class="text-2xl font-bold mb-4">Modifier le produit</h2>
+    <!-- ✅ Message de confirmation -->
+    <div id="successMessage" class="hidden bg-green-100 text-green-800 p-4 rounded-md mb-4"></div>
 
-            <form action="admin/products/edit/<?= $product['id_article'] ?>" method="POST" enctype="multipart/form-data">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <div class="mb-4">
-                        <label for="lib_article" class="block text-sm font-medium text-gray-700">Nom du produit</label>
-                        <input type="text" id="lib_article" name="lib_article" value="<?= htmlspecialchars($product['lib_article']) ?>" class="mt-1 block w-full p-2 border rounded" required>
+    <form id="editProductForm" enctype="multipart/form-data">
+        <input type="hidden" name="id_article" value="<?= $product['id_article'] ?>">
+
+        <!-- 📌 Nom du produit -->
+        <label class="block text-sm font-bold">Nom du produit</label>
+        <input type="text" name="lib_article" value="<?= htmlspecialchars($product['lib_article']) ?>" class="p-2 border rounded w-full mb-4">
+
+        <!-- 🏷️ Catégorie -->
+        <label class="block text-sm font-bold">Catégorie</label>
+        <select name="id_categorie" class="p-2 border rounded w-full mb-4">
+            <?php foreach ($categories as $category): ?>
+                <option value="<?= $category['id_categorie'] ?>" <?= ($product['id_categorie'] == $category['id_categorie']) ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($category['lib_categorie']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+
+        <!-- 🏷️ Sous-catégorie -->
+        <label class="block text-sm font-bold">Sous-catégorie</label>
+        <select name="id_sous_categorie" class="p-2 border rounded w-full mb-4">
+            <option value="">Aucune</option>
+            <?php foreach ($categories as $category): ?>
+                <option value="<?= $category['id_sous_categorie'] ?>" <?= ($product['id_sous_categorie'] == $category['id_sous_categorie']) ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($category['lib_sous_categorie']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+
+        <!-- 💰 Prix -->
+        <label class="block text-sm font-bold">Prix (€)</label>
+        <input type="number" name="prix" step="0.01" value="<?= $product['prix'] ?>" class="p-2 border rounded w-full mb-4">
+
+        <!-- 📦 Stock -->
+        <label class="block text-sm font-bold">Stock</label>
+        <input type="number" name="quantite_stock" value="<?= $product['quantite_stock'] ?>" class="p-2 border rounded w-full mb-4">
+
+        <!-- 🖼 Images actuelles -->
+        <div class="mb-4">
+            <label class="block text-sm font-bold">Images actuelles</label>
+            <div class="flex gap-2">
+                <?php foreach ($images as $image): ?>
+                    <div class="relative">
+                        <img src="<?= $image['url_image'] ?>" class="w-24 h-24 object-cover border rounded">
+                        <button type="button" class="absolute top-0 right-0 bg-red-500 text-white p-1 text-sm remove-image" data-image-id="<?= $image['id_image'] ?>">❌</button>
                     </div>
-
-                    <div class="mb-4">
-                        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                        <textarea id="description" name="description" class="mt-1 block w-full p-2 border rounded" required><?= htmlspecialchars($product['description']) ?></textarea>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="prix" class="block text-sm font-medium text-gray-700">Prix</label>
-                        <input type="number" id="prix" name="prix" value="<?= $product['prix'] ?>" class="mt-1 block w-full p-2 border rounded" required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="quantite_stock" class="block text-sm font-medium text-gray-700">Quantité en stock</label>
-                        <input type="number" id="quantite_stock" name="quantite_stock" value="<?= $product['quantite_stock'] ?>" class="mt-1 block w-full p-2 border rounded" required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="id_sous_categorie" class="block text-sm font-medium text-gray-700">Sous-catégorie</label>
-                        <select id="id_sous_categorie" name="id_sous_categorie" class="mt-1 block w-full p-2 border rounded" required>
-                            <!-- Vérifiez si des sous-catégories existent pour chaque catégorie -->
-                            <?php foreach ($categories as $category): ?>
-                                <?php if (!empty($category['sous_categories'])): ?>
-                                    <optgroup label="<?= htmlspecialchars($category['lib_categorie']) ?>">
-                                        <?php foreach ($category['sous_categories'] as $subcategory): ?>
-                                            <option value="<?= $subcategory['id_sous_categorie'] ?>"><?= htmlspecialchars($subcategory['lib_sous_categorie']) ?></option>
-                                        <?php endforeach; ?>
-                                    </optgroup>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="image" class="block text-sm font-medium text-gray-700">Image du produit</label>
-                        <input type="file" id="image" name="image" class="mt-1 block w-full p-2 border rounded">
-                        <p class="mt-2 text-sm text-gray-500">Laissez vide si vous ne voulez pas changer l'image.</p>
-                    </div>
-
-                    <div class="flex justify-between">
-                        <button type="submit" class="bg-blue-500 text-white p-2 rounded">Enregistrer les modifications</button>
-                        <a href="admin/products" class="text-red-500 p-2">Annuler</a>
-                    </div>
-                </div>
-            </form>
+                <?php endforeach; ?>
+            </div>
         </div>
-    </main>
+
+        <!-- 🆕 Ajout d’images -->
+        <label class="block text-sm font-bold">Ajouter des images</label>
+        <input type="file" name="images[]" multiple class="p-2 border rounded w-full mb-4">
+
+        <!-- ✅ Bouton de mise à jour -->
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-blue-700">
+            ✅ Mettre à jour le produit
+        </button>
+    </form>
+</main>
+
+<script>
+    document.getElementById("editProductForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        let formData = new FormData(this);
+        let url = "http://localhost/projets/back/siteECommerce/admin/products/update"; // 🔍 Vérifie bien cette URL
+
+        console.log("🔍 Envoi AJAX vers :", url);
+
+        fetch(url, {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text()) // 🆕 Change `.json()` en `.text()` pour voir la réponse brute
+            .then(text => {
+                console.log("🔍 Réponse brute :", text);
+                return JSON.parse(text);
+            })
+            .then(data => {
+                if (data.success) {
+                    document.getElementById("successMessage").innerText = "✅ Produit mis à jour avec succès !";
+                    document.getElementById("successMessage").classList.remove("hidden");
+                } else {
+                    console.error("Erreur serveur :", data.error);
+                }
+            })
+            .catch(error => console.error("❌ Erreur AJAX :", error));
+    });
+
+    // ❌ Suppression d’une image existante
+    document.querySelectorAll(".remove-image").forEach(button => {
+        button.addEventListener("click", function() {
+            let imageId = this.getAttribute("data-image-id");
+            fetch("products/delete_image/" + imageId, {
+                    method: "POST"
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.parentElement.remove();
+                    }
+                });
+        });
+    });
+</script>
 
 <?php include('src/app/Views/includes/footer.php'); ?>

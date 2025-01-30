@@ -34,4 +34,3 @@ class HomeController
         include('src/app/Views/public/product.php');
     }
 }
-?>

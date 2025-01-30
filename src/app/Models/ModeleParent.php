@@ -23,7 +23,6 @@ class ModeleParent
         }
     }
 
-    // Ajoutez cette méthode pour obtenir l'objet PDO
     public function getPdo()
     {
         return $this->pdo;
