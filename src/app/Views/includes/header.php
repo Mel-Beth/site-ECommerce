@@ -62,44 +62,15 @@ $pdo = $modeleParent->getPdo();
                 <a href="cart" class="flex items-center space-x-2">
                     <i class="fas fa-shopping-cart text-yellow-500"></i>
                     <span>Panier</span>
-                    <span class="bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full ml-1">
-                        <?= count($_SESSION['cart'] ?? []) ?>
+                    <span id="cart-count-header" class="bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full ml-1">
+                        0
                     </span>
+
                 </a>
                 <div class="dropdown-menu hidden group-hover:block text-black">
-                    <?php if (empty($_SESSION['cart'])): ?>
-                        <p class="text-gray-500">Votre panier est vide.</p>
-                    <?php else: ?>
-                        <ul class="space-y-2">
-                            <?php
-                            $ids = implode(',', array_keys($_SESSION['cart'] ?? []));
-
-                            if (!empty($ids)) {
-                                $stmt = $pdo->query("SELECT id_article, lib_article, prix FROM articles WHERE id_article IN ($ids)");
-                                $products = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-                                foreach ($products as $product):
-                                    $quantity = $_SESSION['cart'][$product['id_article']];
-                                    $totalPrice = $product['prix'] * $quantity;
-                            ?>
-                                    <li class="flex justify-between items-center">
-                                        <span class="font-semibold"><?= htmlspecialchars($product['lib_article']) ?></span>
-                                        <span><?= $quantity ?> x <?= number_format($product['prix'], 2) ?> €</span>
-                                        <form action="cart" method="POST" class="ml-2">
-                                            <input type="hidden" name="remove_product_id" value="<?= $product['id_article'] ?>">
-                                            <button type="submit" class="text-red-500 hover:text-red-700">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </li>
-                            <?php endforeach;
-                            } else {
-                                echo "<p class='text-gray-500'>Votre panier est vide.</p>";
-                            }
-                            ?>
-                        </ul>
-                        <a href="cart" class="block text-center mt-4 text-yellow-500 hover:underline">Voir le panier</a>
-                    <?php endif; ?>
+                    <p id="header-cart-empty" class="text-gray-500">Votre panier est vide.</p>
+                    <ul id="header-cart-items" class="space-y-2"></ul>
+                    <a href="cart" class="block text-center mt-4 text-yellow-500 hover:underline">Voir le panier</a>
                 </div>
             </div>
         <?php endif; ?>

@@ -8,7 +8,26 @@ class CartModel extends ModeleParent
 {
     public function getCartItems()
     {
-        return $_SESSION['cart'] ?? [];
+        // Si l'utilisateur n'est pas connecté, retourner un panier vide (on utilise LocalStorage maintenant)
+        if (!isset($_SESSION['user_id'])) {
+            return [];
+        }
+
+        $pdo = $this->getPdo();
+        $stmt = $pdo->prepare("SELECT a.id_article, a.lib_article, a.prix, p.quantite 
+                               FROM panier p 
+                               JOIN articles a ON p.id_article = a.id_article 
+                               WHERE p.id_membre = :user");
+        $stmt->execute(['user' => $_SESSION['user_id']]);
+        return $stmt->fetchAll();
+    }
+
+    public function getTotal()
+    {
+        $cartItems = $this->getCartItems();
+        return array_reduce($cartItems, function ($sum, $item) {
+            return $sum + ($item['prix'] * $item['quantite']);
+        }, 0);
     }
 
     public function addToCart($productId, $quantity)
@@ -37,11 +56,17 @@ class CartModel extends ModeleParent
         unset($_SESSION['cart'][$productId]);
     }
 
-    public function updateCartQuantity($productId, $quantity)
+    public function updateCartQuantity($userId, $productId, $quantity)
     {
-        if (isset($_SESSION['cart'][$productId])) {
-            $_SESSION['cart'][$productId] = $quantity;
-        }
+        $pdo = $this->getPdo();
+        $stmt = $pdo->prepare("INSERT INTO panier (id_membre, id_article, quantite)
+            VALUES (:user, :id, :quantity)
+            ON DUPLICATE KEY UPDATE quantite = :quantity");
+        $stmt->execute([
+            'user' => $userId,
+            'id' => $productId,
+            'quantity' => $quantity
+        ]);
     }
 
     public function clearCart()

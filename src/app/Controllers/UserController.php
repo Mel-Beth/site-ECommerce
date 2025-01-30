@@ -3,6 +3,7 @@
 namespace Controllers;
 
 use Models\UserModel;
+use Models\CartModel;
 
 class UserController
 {
@@ -51,5 +52,36 @@ class UserController
 
         // Inclure la vue pour afficher la liste des utilisateurs
         include('src/app/Views/admin/usersAdmin.php');
+    }
+
+    public function login()
+    {
+        session_start();
+        if (isset($_POST['login'])) {
+            $userModel = new UserModel();
+            $user = $userModel->getUserByEmail($_POST['email']);
+
+            if ($user && password_verify($_POST['password'], $user['password'])) {
+                $_SESSION['user_id'] = $user['id_membre'];
+
+                if (isset($_COOKIE['ecommerce_cart'])) {
+                    $cart = json_decode($_COOKIE['ecommerce_cart'], true);
+                    $cartModel = new CartModel();
+
+                    foreach ($cart as $item) {
+                        $cartModel->updateCartQuantity($_SESSION['user_id'], $item['id'], $item['quantity']);
+                    }
+
+                    setcookie('ecommerce_cart', '', time() - 3600, '/'); // Supprimer le cookie
+                }
+
+                header("Location: index.php");
+                exit();
+            } else {
+                $_SESSION['error'] = "Email ou mot de passe incorrect.";
+            }
+        }
+
+        include('src/app/Views/public/login.php');
     }
 }

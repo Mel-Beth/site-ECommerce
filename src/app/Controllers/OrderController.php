@@ -32,10 +32,10 @@ class OrderController
 
     public function validateOrder()
     {
-        // Vérifier si l'utilisateur est connecté
+        session_start();
         if (!isset($_SESSION['user_id'])) {
             $_SESSION['order_error'] = "Vous devez être connecté pour valider une commande.";
-            header('Location: login.php'); // Rediriger vers la page de connexion
+            header('Location: login.php');
             exit();
         }
 
@@ -43,20 +43,13 @@ class OrderController
         $orderModel = new OrderModel();
 
         $cartItems = $cartModel->getCartItems();
-        $userId = $_SESSION['user_id'];
         $total = array_reduce($cartItems, function ($sum, $item) {
-            return $sum + ($item['price'] * $item['quantity']);
+            return $sum + ($item['prix'] * $item['quantite']);
         }, 0);
 
         if (!empty($cartItems)) {
-            $orderId = $orderModel->addOrder($userId, $cartItems, $total);
-
-            if ($orderId) {
-                $_SESSION['cart'] = []; // Vider le panier après commande
-                $_SESSION['order_success'] = "Votre commande a bien été validée ✅.";
-            } else {
-                $_SESSION['order_error'] = "Une erreur s'est produite lors de la validation de la commande ❌.";
-            }
+            $orderId = $orderModel->addOrder($_SESSION['user_id'], $cartItems, $total);
+            $_SESSION['cart'] = []; // Vider le panier après commande
         }
 
         header('Location: cart');

@@ -8,10 +8,21 @@ class CartController
 {
     public function index()
     {
+       // Si l'utilisateur n'est pas connecté, le panier sera géré par LocalStorage en JS
+    if (!isset($_SESSION['user_id'])) {
+        $products = [];
+    } else {
         $cartModel = new CartModel();
-        $cartItems = $cartModel->getCartItems();
-        include('src/app/Views/public/cart.php');
+        $products = $cartModel->getCartItems();
     }
+
+    // Définition des valeurs par défaut pour éviter les erreurs dans la vue
+    $shippingCost = 0;
+    $discount = 0;
+
+    include('src/app/Views/public/cart.php');
+    }
+
 
     public function addToCart()
     {
@@ -61,29 +72,21 @@ class CartController
         exit();
     }
 
-    public function updateQuantity()
+    public function updateCartQuantity()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $data = json_decode(file_get_contents('php://input'), true);
-            $productId = $data['product_id'] ?? null;
-            $quantity = $data['quantity'] ?? 1;
+        session_start();
+        $data = json_decode(file_get_contents('php://input'), true);
+        $productId = $data['product_id'] ?? null;
+        $quantity = $data['quantity'] ?? 1;
 
-            if ($productId) {
-                $cartModel = new CartModel();
-                $cartModel->updateCartQuantity($productId, $quantity);
-
-                // Calcul du total mis à jour
-                $cartItems = $cartModel->getCartItems();
-                $newTotal = array_reduce($cartItems, function ($total, $item) {
-                    return $total + ($item['prix'] * $item['quantity']);
-                }, 0);
-
-                echo json_encode(['success' => true, 'new_total' => number_format($newTotal, 2) . " €"]);
-                exit();
-            }
+        if ($productId) {
+            $cartModel = new CartModel();
+            $cartModel->updateCartQuantity($_SESSION['user_id'], $productId, $quantity);
+            echo json_encode(["success" => true, "new_total" => $cartModel->getTotal()]);
+            exit();
         }
 
-        echo json_encode(['success' => false, 'message' => 'Produit non trouvé']);
+        echo json_encode(["error" => "Requête invalide"]);
         exit();
     }
 

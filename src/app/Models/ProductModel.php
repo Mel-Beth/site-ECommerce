@@ -197,7 +197,6 @@ class ProductModel extends ModeleParent
     public function applyDiscount($productId, $discountPercentage)
     {
         $pdo = $this->getPdo();
-
         $stmt = $pdo->prepare("UPDATE articles SET prix = prix - (prix * :discount / 100) WHERE id_article = :id");
         $stmt->execute([
             'discount' => $discountPercentage,
@@ -208,7 +207,6 @@ class ProductModel extends ModeleParent
     public function updateStock($productId, $quantitySold)
     {
         $pdo = $this->getPdo();
-
         $stmt = $pdo->prepare("UPDATE articles SET quantite_stock = quantite_stock - :quantity WHERE id_article = :id");
         $stmt->execute([
             'quantity' => $quantitySold,

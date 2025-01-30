@@ -34,7 +34,14 @@
                 </div>
 
                 <!-- Bouton pour ajouter au panier -->
-                <button type="submit" class="mt-4 inline-block bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Ajouter au panier</button>
+                <button class="add-to-cart bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+                    data-id="<?= $product['id_article']; ?>"
+                    data-name="<?= htmlspecialchars($product['lib_article']); ?>"
+                    data-price="<?= $product['prix']; ?>"
+                    data-discount="<?= $product['remise'] ?? 0; ?>">
+                    Ajouter au panier 🛒
+                </button>
+
             </form>
 
             <!-- Avis des clients -->

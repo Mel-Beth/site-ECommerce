@@ -192,9 +192,8 @@ class OrderModel extends ModeleParent
     public function addOrder($userId, $cartItems, $total)
     {
         $pdo = $this->getPdo();
-
-        // Insérer la commande
-        $stmt = $pdo->prepare("INSERT INTO commandes (id_membre, date_commande, montant_ttc, statut_preparation) VALUES (:userId, NOW(), :total, 'En attente')");
+        $stmt = $pdo->prepare("INSERT INTO commandes (id_membre, date_commande, montant_ttc, statut_preparation)
+            VALUES (:userId, NOW(), :total, 'En attente')");
         $stmt->execute([
             'userId' => $userId,
             'total' => $total
@@ -202,13 +201,13 @@ class OrderModel extends ModeleParent
 
         $orderId = $pdo->lastInsertId();
 
-        // Insérer les articles de la commande
         foreach ($cartItems as $item) {
-            $stmt = $pdo->prepare("INSERT INTO contenir (id_commande, id_article, quantite) VALUES (:orderId, :productId, :quantity)");
+            $stmt = $pdo->prepare("INSERT INTO contenir (id_commande, id_article, quantite)
+                VALUES (:orderId, :productId, :quantity)");
             $stmt->execute([
                 'orderId' => $orderId,
                 'productId' => $item['id'],
-                'quantity' => $item['quantity']
+                'quantity' => $item['quantite']
             ]);
         }
 
